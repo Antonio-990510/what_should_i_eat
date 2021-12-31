@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:what_should_i_eat/styles/color.dart';
+import 'package:what_should_i_eat/styles/font.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,13 +10,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    final themeData = ThemeData(textTheme: nanumGothicTextTheme);
+
+    return GetMaterialApp(
+      title: '뭐 먹을까?',
+      theme: themeData.copyWith(
+        colorScheme: lightColorScheme,
+      ),
+      darkTheme: themeData.copyWith(
+        colorScheme: darkColorScheme,
       ),
       home: const LoginPage(),
     );
@@ -25,6 +32,11 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Text('안녕하세요', style: context.textTheme.bodyText1),
+      ),
+    );
   }
 }
