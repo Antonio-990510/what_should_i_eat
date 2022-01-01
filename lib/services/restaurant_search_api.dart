@@ -1,3 +1,4 @@
+/*
 import 'package:flutter_js/flutter_js.dart';
 import 'package:what_should_i_eat/model/restaurant_model.dart';
 import 'package:http/http.dart' as http;
@@ -23,3 +24,4 @@ script.onload = () => {
   print(result.stringResult);
   return [];
 }
+*/
