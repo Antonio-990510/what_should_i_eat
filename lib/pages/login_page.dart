@@ -18,7 +18,12 @@ class LoginPage extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Hero(
                 tag: 'mainTitle',
-                child: Text('뭐 먹을까?', style: context.textTheme.headline4),
+                child: Text(
+                  '뭐 먹을까?',
+                  style: context.textTheme.headline3!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
@@ -28,14 +33,15 @@ class LoginPage extends StatelessWidget {
               children: [
                 BarButton(
                   onPressed: () {},
+                  iconData: Icons.messenger, // TODO(민성): kakao icon으로 수정
                   label: '카카오로 로그인',
-                  color: const Color(0xFFF7E600),
                 ),
                 BarButton(
                   onPressed: () => Get.off(const HomePage()),
                   label: '비회원으로 이용하기',
-                  labelColor: Colors.black54,
+                  labelColor: const Color(0xE6FFFFFF),
                   color: Colors.transparent,
+                  overlayColor: Colors.white24,
                 ),
               ],
             ),

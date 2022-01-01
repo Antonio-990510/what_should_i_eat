@@ -20,7 +20,12 @@ class HomePage extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Hero(
                 tag: 'mainTitle',
-                child: Text('뭐 먹을까?', style: context.textTheme.headline4),
+                child: Text(
+                  '뭐 먹을까?',
+                  style: context.textTheme.headline3!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
@@ -31,19 +36,16 @@ class HomePage extends StatelessWidget {
                 BarButton(
                   onPressed: () {},
                   label: '주변 식당 16강 월드컵',
-                  color: context.theme.colorScheme.primaryVariant,
                 ),
                 const SizedBox(height: 8),
                 BarButton(
                   onPressed: () {},
                   label: '조건부 랜덤 찾기',
-                  color: context.theme.colorScheme.secondary,
                 ),
                 const SizedBox(height: 8),
                 BarButton(
                   onPressed: () {},
                   label: '주변 식당 랜덤 찾기',
-                  color: context.theme.colorScheme.primary,
                 ),
               ],
             ),
