@@ -13,29 +13,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = ThemeData(textTheme: nanumGothicTextTheme);
-
     return GetMaterialApp(
       title: '뭐 먹을까?',
       themeMode: ThemeMode.system,
-      theme: themeData.copyWith(
+      theme: ThemeData(
         colorScheme: lightColorScheme,
+        iconTheme: const IconThemeData(color: Colors.black, opacity: 0.8),
+        textTheme: nanumGothicLightTextTheme,
+        scaffoldBackgroundColor: lightColorScheme.background,
       ),
-      darkTheme: themeData.copyWith(
+      darkTheme: ThemeData(
         colorScheme: darkColorScheme,
+        iconTheme: const IconThemeData(color: Colors.white, opacity: 0.8),
+        textTheme: nanumGothicDarkTextTheme,
+        scaffoldBackgroundColor: darkColorScheme.background,
       ),
-      home: Builder(
-        builder: (context) => Theme(
-          data: context.theme.copyWith(
-            scaffoldBackgroundColor: context.theme.colorScheme.background,
-            textTheme: context.theme.textTheme.apply(
-              displayColor: context.theme.colorScheme.onBackground,
-              bodyColor: context.theme.colorScheme.onBackground,
-            ),
-          ),
-          child: const LoginPage(),
-        ),
-      ),
+      home: const LoginPage(),
     );
   }
 }

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:what_should_i_eat/pages/home_page.dart';
 import 'package:what_should_i_eat/widgets/bar_button.dart';
 import 'package:what_should_i_eat/widgets/default_scaffold.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DefaultScaffold(
+      actions: [
+        IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
+      ],
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,14 +30,20 @@ class LoginPage extends StatelessWidget {
               children: [
                 BarButton(
                   onPressed: () {},
-                  label: '카카오로 로그인',
-                  color: const Color(0xFFF7E600),
+                  label: '주변 식당 16강 월드컵',
+                  color: context.theme.colorScheme.primaryVariant,
                 ),
+                const SizedBox(height: 8),
                 BarButton(
-                  onPressed: () => Get.off(const HomePage()),
-                  label: '비회원으로 이용하기',
-                  labelColor: Colors.black54,
-                  color: Colors.transparent,
+                  onPressed: () {},
+                  label: '조건부 랜덤 찾기',
+                  color: context.theme.colorScheme.secondary,
+                ),
+                const SizedBox(height: 8),
+                BarButton(
+                  onPressed: () {},
+                  label: '주변 식당 랜덤 찾기',
+                  color: context.theme.colorScheme.primary,
                 ),
               ],
             ),
