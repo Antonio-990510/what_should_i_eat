@@ -18,14 +18,20 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Hero(
-                tag: 'mainTitle',
-                child: Text(
-                  '뭐 먹을까?',
-                  style: context.textTheme.headline3!.copyWith(
-                    fontWeight: FontWeight.bold,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Hero(
+                    tag: 'mainTitle',
+                    child: Text(
+                      '뭐 먹을까?',
+                      style: context.textTheme.headline3!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(),
+                ],
               ),
             ),
           ),

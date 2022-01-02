@@ -5,10 +5,12 @@ class DefaultScaffold extends StatelessWidget {
   const DefaultScaffold({
     Key? key,
     this.actions = const [],
+    this.padding,
     required this.body,
   }) : super(key: key);
 
   final List<Widget> actions;
+  final EdgeInsets? padding;
   final Widget body;
 
   @override
@@ -60,7 +62,7 @@ class DefaultScaffold extends StatelessWidget {
             if (hasAppBarSpace) const SizedBox(height: 24),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: padding ?? const EdgeInsets.all(24.0),
                 child: body,
               ),
             ),
