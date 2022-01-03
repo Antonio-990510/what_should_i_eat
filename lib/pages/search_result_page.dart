@@ -33,9 +33,17 @@ class _SearchResultPageState extends State<SearchResultPage> {
     BuildContext toHeroContext,
   ) {
     if (flightDirection.index == 0) {
-      return RotationTransition(
-        turns: animation,
-        child: toHeroContext.widget,
+      return Stack(
+        children: [
+          FadeTransition(
+            opacity: ReverseAnimation(animation),
+            child: fromHeroContext.widget,
+          ),
+          FadeTransition(
+            opacity: animation,
+            child: toHeroContext.widget,
+          ),
+        ],
       );
     }
     return toHeroContext.widget;
