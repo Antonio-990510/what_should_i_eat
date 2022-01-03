@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:what_should_i_eat/pages/loading_page.dart';
+import 'package:what_should_i_eat/pages/search_result_page.dart';
 import 'package:what_should_i_eat/widgets/bar_button.dart';
 import 'package:what_should_i_eat/widgets/default_scaffold.dart';
 
@@ -50,7 +52,11 @@ class HomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 BarButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    Get.to(const LoadingPage());
+                    await Future.delayed(const Duration(seconds: 2));
+                    Get.off(const SearchResultPage());
+                  },
                   label: '주변 식당 랜덤 찾기',
                 ),
               ],

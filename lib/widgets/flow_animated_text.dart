@@ -31,6 +31,12 @@ class _FlowAnimatedTextState extends State<FlowAnimatedText> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final animatedTextStyle = context.textTheme.headline4!.copyWith(
       color: const Color(0x2EFFFFFF),
