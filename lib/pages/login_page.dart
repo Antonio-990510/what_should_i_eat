@@ -50,7 +50,7 @@ class LoginPage extends StatelessWidget {
                     label: '카카오로 로그인',
                   ),
                   BarButton(
-                    onPressed: () => Get.off(const HomePage()),
+                    onPressed: () => Get.off(() => const HomePage()),
                     label: '비회원으로 이용하기',
                     labelColor: const Color(0xE6FFFFFF),
                     color: Colors.transparent,
