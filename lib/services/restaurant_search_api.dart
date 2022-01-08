@@ -26,21 +26,41 @@ Future<String> fetchData() async {
   };
 
   Response response = await get(
-      Uri.parse(//이 부분이 코딩셰프님 영상과 차이가 있다. 플러터 버젼업이 되면서 이 메소드를 써야 제대로 uri를 인식한다.
-          "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lon,$lat&sourcecrs=epsg:4326&output=json"),
+      Uri.parse(
+          "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lon,$lat&sourcecrs=epsg:4326&output=json&orders=addr,roadaddr"),
       headers: headerss);
-  // 미리 만들어둔 headers map을 헤더에 넣어준다.
+  //"https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lon,$lat&sourcecrs=epsg:4326&output=json"
+
   String jsonData = response.body;
-  //response에서 body부분만 받아주는 변수 만들어주공~
-  debugPrint(jsonData); // 확인한번하고
-  var myJsonGu = jsonDecode(jsonData)["results"][1]['region']['area2']['name'];
-  var myJsonSi = jsonDecode(jsonData)["results"][1]['region']['area1']['name'];
+
+  debugPrint(jsonData);
+  var myJsonGu = jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
+  var myJsonSi = jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
   var myJsonDong =
-      jsonDecode(jsonData)["results"][1]['region']['area3']['name'];
-  List<String> gusi = [myJsonSi, myJsonGu, myJsonDong];
-  String address = gusi[0] + " " + gusi[1] + " " + gusi[2];
+      jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
+  var myJsonDetail = jsonDecode(jsonData)["results"][0]['land']['number1'];
+  var myJsonDetail2 = jsonDecode(jsonData)["results"][0]['land']['number2'];
+  debugPrint(myJsonDetail2);
+
+  List<String> myLocation = [
+    myJsonSi,
+    myJsonGu,
+    myJsonDong,
+    myJsonDetail,
+    myJsonDetail2
+  ];
+  String address = myLocation[0] +
+      " " +
+      myLocation[1] +
+      " " +
+      myLocation[2] +
+      " " +
+      myLocation[3] +
+      "-" +
+      myLocation[4];
+
   debugPrint(address);
-  return address; //구랑 시를 받아서 gusi라는 귀여운 이름으로 받는다...?
+  return address;
 }
 
 Future<dynamic> getUser(String gusi) async {

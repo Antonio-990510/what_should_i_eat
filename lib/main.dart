@@ -4,6 +4,8 @@ import 'package:what_should_i_eat/pages/login_page.dart';
 import 'package:what_should_i_eat/styles/color.dart';
 import 'package:what_should_i_eat/styles/font.dart';
 
+import 'pages/loading.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -30,7 +32,8 @@ class MyApp extends StatelessWidget {
         textTheme: nanumGothicTextTheme,
         scaffoldBackgroundColor: darkColorScheme.background,
       ),
-      home: const LoginPage(),
+      //TODO: LoginPage로 바꾸기
+      home: const Loading(),
     );
   }
 }
