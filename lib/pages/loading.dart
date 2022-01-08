@@ -20,9 +20,12 @@ class _LoadingState extends State<Loading> {
   void getLocation() async {
     try{
       //await Geolocator.requestPermission();
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      print(position);
-      searchRestaurant(position);
+      // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      // print(position);
+      // searchRestaurant(position);
+      String gusi=await fetchData();
+      getUser(gusi);
+
 
     }catch(e){
       print('인터넷 연결에 문제가 있습니다.');
