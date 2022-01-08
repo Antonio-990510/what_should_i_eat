@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:what_should_i_eat/services/restaurant_search_api.dart';
 
 class Loading extends StatefulWidget {
-   const Loading({Key? key}):super(key: key);
+  const Loading({Key? key}) : super(key: key);
 
   @override
   _LoadingState createState() => _LoadingState();
@@ -11,27 +10,23 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   @override
-  void initState(){
+  void initState() {
     //TODO:implement initState
     super.initState();
     getLocation();
   }
 
   void getLocation() async {
-    try{
+    try {
       //await Geolocator.requestPermission();
       // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       // print(position);
       // searchRestaurant(position);
-      String gusi=await fetchData();
+      String gusi = await fetchData();
       getUser(gusi);
-
-
-    }catch(e){
-      print('인터넷 연결에 문제가 있습니다.');
+    } catch (e) {
+      debugPrint('인터넷 연결에 문제가 있습니다.');
     }
-
-
   }
 
   @override
