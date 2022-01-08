@@ -65,4 +65,7 @@ TextTheme get nanumGothicTextTheme => TextTheme(
         fontWeight: FontWeight.w400,
         letterSpacing: 1.5,
       ),
+    ).apply(
+      displayColor: Colors.white,
+      bodyColor: Colors.white,
     );

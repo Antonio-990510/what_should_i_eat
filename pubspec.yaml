@@ -38,10 +38,12 @@ dependencies:
   get: ^4.6.1
   google_fonts: ^2.2.0
   geolocator: ^8.0.1
+  flutter_rating_bar: ^4.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  network_image_mock: ^2.0.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
