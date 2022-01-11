@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:html/dom.dart' as dom;
-import 'package:http/http.dart' as http;
+//import 'package:html/dom.dart' as dom;
+//import 'package:http/http.dart' as http;
 import 'package:what_should_i_eat/services/restaurant_search_api.dart';
-import 'package:html/parser.dart' as parser;
+//import 'package:html/parser.dart' as parser;
 
 class Loading extends StatefulWidget {
   const Loading({Key? key}) : super(key: key);
