@@ -34,10 +34,14 @@ Future<String> fetchData() async {
   String jsonData = response.body;
 
   debugPrint(jsonData);
-  var myJsonGu = jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
+  Map<String, dynamic> userAddress=jsonDecode(jsonData);
+  var address=Address.fromJson(userAddress);
+  String userLocation=address.si+address.gu+address.dong+address.detail1+"-"+address.detail2;
+
+  return userLocation;
+  /*var myJsonGu = jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
   var myJsonSi = jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
-  var myJsonDong =
-      jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
+  var myJsonDong = jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
   var myJsonDetail = jsonDecode(jsonData)["results"][0]['land']['number1'];
   var myJsonDetail2 = jsonDecode(jsonData)["results"][0]['land']['number2'];
   debugPrint(myJsonDetail2);
@@ -60,13 +64,42 @@ Future<String> fetchData() async {
       myLocation[4];
 
   debugPrint(address);
-  return address;
+  return address;*/
 }
+
+class Address{
+  final String si;
+  final String gu;
+  final String dong;
+  final String detail1;
+  final String detail2;
+
+  Address(this.si, this.gu, this.dong, this.detail1, this.detail2);
+
+  Address.fromJson(Map<String, dynamic> json) :
+        si=json["results"][0]['region']['area1']['name'],
+        gu=json["results"][0]['region']['area2']['name'],
+        dong=json["results"][0]['region']['area3']['name'],
+        detail1=json["results"][0]['land']['number1'],
+        detail2=json["results"][0]['land']['number2'];
+
+  Map<String, dynamic> toJson() =>
+      {
+        'si':si,
+        'gu':gu,
+        'dong':dong,
+        'detail1':detail1,
+        'detail2':detail2,
+      };
+}
+
 
 Future<dynamic> getUser(String gusi) async {
   debugPrint(gusi);
   final uri = Uri.parse(
-      "https://openapi.naver.com/v1/search/local.json?query=$gusi 맛집&display=20&start=1&sort=random");
+      //'https://openapi.naver.com/v1/search/blog?query=$gusi 맛집'
+      "https://openapi.naver.com/v1/search/local.json?query=$gusi 맛집&display=20&start=1&sort=random"
+  );
   final Map<String, String> header = {
     "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
     "X-Naver-Client-Secret": "aSgxIylTMz",
@@ -77,6 +110,7 @@ Future<dynamic> getUser(String gusi) async {
   debugPrint(response.body);
   return response.body;
 }
+
 
 // Future<List> searchRestaurant(Position position) async {
 //   var url = Uri.parse(
