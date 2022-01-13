@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 //import 'package:html/dom.dart' as dom;
 //import 'package:http/http.dart' as http;
 import 'package:what_should_i_eat/services/restaurant_search_api.dart';
@@ -25,7 +26,9 @@ class _LoadingState extends State<Loading> {
       // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       // print(position);
       // searchRestaurant(position);
+
       String myLocation = await fetchData();
+      debugPrint(myLocation);
       getUser(myLocation);
     } catch (e) {
       debugPrint('인터넷 연결에 문제가 있습니다.');
@@ -33,7 +36,8 @@ class _LoadingState extends State<Loading> {
   }
 
   /*void restaurantCrolling() async {
-     String url= '''https://pcmap.place.naver.com/restaurant/list?query=석수역 맛집''';
+     String url= '''https://pcmap.place.naver.com/restaurant/list?query=석수역%20맛집''';
+    String url= '''https://search.map.kakao.com/mapsearch/map.daum?callback=jQuery18102443191294827569_1642036613679&q=%EA%B2%BD%EA%B8%B0%EB%8F%84+%EC%95%88%EC%96%91%EC%8B%9C+%EB%A7%8C%EC%95%88%EA%B5%AC+%EC%84%9D%EC%88%98%EB%8F%99+374-5+%EC%9D%8C%EC%8B%9D%EC%A0%90&msFlag=S&page=1&sort=1''';
      http.Response response = await http.get(Uri.parse(url));
      dom.Document document = parser.parse(response.body);
 

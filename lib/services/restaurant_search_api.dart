@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-
-// const String _kNativeAppKey = 'db88ffc1aed093e91db845b457d49495';
-// const String _kJavaScriptKey = '7353032fb3c902fbc319097fbc35a44a';
-// const String _kRestApiKey = '665888240dc5aa6f10d609f5be6c20d1';
+import 'package:what_should_i_eat/model/restaurant_model.dart';
 
 Future<String> fetchData() async {
+  await Geolocator.requestPermission();
   Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);
   //현재위치를 position이라는 변수로 저장
@@ -29,47 +27,12 @@ Future<String> fetchData() async {
       Uri.parse(
           "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lon,$lat&sourcecrs=epsg:4326&output=json&orders=addr,roadaddr"),
       headers: headerss);
-  //"https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lon,$lat&sourcecrs=epsg:4326&output=json"
-
   String jsonData = response.body;
-
   debugPrint(jsonData);
   Map<String, dynamic> userAddress = jsonDecode(jsonData);
   var address = Address.fromJson(userAddress);
-  String userLocation = address.si +
-      address.gu +
-      address.dong +
-      address.detail1 +
-      "-" +
-      address.detail2;
-
+  String userLocation = address.toString();
   return userLocation;
-  /*var myJsonGu = jsonDecode(jsonData)["results"][0]['region']['area2']['name'];
-  var myJsonSi = jsonDecode(jsonData)["results"][0]['region']['area1']['name'];
-  var myJsonDong = jsonDecode(jsonData)["results"][0]['region']['area3']['name'];
-  var myJsonDetail = jsonDecode(jsonData)["results"][0]['land']['number1'];
-  var myJsonDetail2 = jsonDecode(jsonData)["results"][0]['land']['number2'];
-  debugPrint(myJsonDetail2);
-
-  List<String> myLocation = [
-    myJsonSi,
-    myJsonGu,
-    myJsonDong,
-    myJsonDetail,
-    myJsonDetail2
-  ];
-  String address = myLocation[0] +
-      " " +
-      myLocation[1] +
-      " " +
-      myLocation[2] +
-      " " +
-      myLocation[3] +
-      "-" +
-      myLocation[4];
-
-  debugPrint(address);
-  return address;*/
 }
 
 class Address {
@@ -95,22 +58,46 @@ class Address {
         'detail1': detail1,
         'detail2': detail2,
       };
+
+  @override
+  String toString() {
+    return si + " " + gu + " " + dong + " " + detail1 + "-" + detail2;
+  }
 }
 
 Future<dynamic> getUser(String gusi) async {
   debugPrint(gusi);
-  final uri = Uri.parse(
-      //'https://openapi.naver.com/v1/search/blog?query=$gusi 맛집'
-      "https://openapi.naver.com/v1/search/local.json?query=$gusi 맛집&display=20&start=1&sort=random");
-  final Map<String, String> header = {
-    "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
-    "X-Naver-Client-Secret": "aSgxIylTMz",
-    "display": "1"
-  };
+  var restaurant;
+  List<String> foodList = [
+    "맛집",
+    "고깃",
+    "햄버거",
+    "해산물",
+    "족발",
+    "보쌈",
+    "피자",
+    "치킨",
+    "국밥",
+    "분식"
+  ];
 
-  final response = await http.get(uri, headers: header);
-  debugPrint(response.body);
-  return response.body;
+  for (int i = 0; i < foodList.length; i++) {
+    final uri = Uri.parse(
+        "https://openapi.naver.com/v1/search/local.json?query=$gusi ${foodList[i]}&display=20&start=1&sort=random");
+    final Map<String, String> header = {
+      "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
+      "X-Naver-Client-Secret": "aSgxIylTMz",
+      "display": "1"
+    };
+
+    final response = await http.get(uri, headers: header);
+    debugPrint(response.body);
+    String jsonRestaurantData = response.body;
+    Map<String, dynamic> restaurantList = jsonDecode(jsonRestaurantData);
+    restaurant = RestaurantModel.fromJson(restaurantList);
+    //return response.body;
+  }
+  debugPrint(restaurant.toString());
 }
 
 // Future<List> searchRestaurant(Position position) async {
