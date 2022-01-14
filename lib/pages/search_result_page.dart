@@ -114,11 +114,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   const SizedBox(height: 12),
                   CustomRatingBar(rating: widget.restaurantModel.rating),
                   const Expanded(child: SizedBox()),
-                  BarButton(onPressed: () {}, label: '지도앱으로 이동'),
-                  BarButton(
+                  PrimaryBarButton(onPressed: () {}, label: '지도앱으로 이동'),
+                  TextOnlyBarButton(
                     onPressed: () {},
-                    color: Colors.transparent,
-                    overlayColor: Colors.white24,
                     labelColor: Colors.white70,
                     label: '이 식당 제외하고 다시 찾기',
                   ),

@@ -6,6 +6,7 @@ import 'package:what_should_i_eat/providers/world_cup_provider.dart';
 import 'package:what_should_i_eat/sample_restaurant_list.dart';
 import 'package:what_should_i_eat/widgets/bar_button.dart';
 import 'package:what_should_i_eat/widgets/default_scaffold.dart';
+import 'package:what_should_i_eat/widgets/my_list/my_list_bottom_sheet.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -43,7 +44,14 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                BarButton(
+                PrimaryBarButton(
+                  onPressed: () {
+                    Get.bottomSheet(const MyListBottomSheet());
+                  },
+                  label: '나의 리스트에서 랜덤 찾기',
+                ),
+                const SizedBox(height: 8),
+                PrimaryBarButton(
                   onPressed: () {
                     Get.put(WorldCupProvider())
                         .startWorldCup(sampleRestaurantList);
@@ -51,12 +59,12 @@ class HomePage extends StatelessWidget {
                   label: '주변 식당 월드컵',
                 ),
                 const SizedBox(height: 8),
-                BarButton(
+                PrimaryBarButton(
                   onPressed: () {},
                   label: '조건부 랜덤 찾기',
                 ),
                 const SizedBox(height: 8),
-                BarButton(
+                PrimaryBarButton(
                   onPressed: () async {
                     Get.to(() => const LoadingPage());
                     await Future.delayed(const Duration(seconds: 2));
