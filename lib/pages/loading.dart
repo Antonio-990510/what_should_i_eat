@@ -22,11 +22,6 @@ class _LoadingState extends State<Loading> {
 
   void getLocation() async {
     try {
-      //await Geolocator.requestPermission();
-      // Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      // print(position);
-      // searchRestaurant(position);
-
       String myLocation = await fetchData();
       debugPrint(myLocation);
       getUser(myLocation);

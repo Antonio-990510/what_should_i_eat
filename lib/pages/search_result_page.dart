@@ -84,11 +84,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 color: context.theme.colorScheme.background,
                 boxShadow: const [
                   BoxShadow(
-                    color: Colors.black38,
-                    offset: Offset(0, -2),
-                    spreadRadius: 2.0,
-                    blurRadius: 4.0
-                  ),
+                      color: Colors.black38,
+                      offset: Offset(0, -2),
+                      spreadRadius: 2.0,
+                      blurRadius: 4.0),
                 ],
               ),
               padding: const EdgeInsets.all(24.0),

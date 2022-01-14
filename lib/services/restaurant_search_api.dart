@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:what_should_i_eat/model/restaurant_model.dart';
 
+const int _naverAPIItemsMaxCount = 5;
+
 Future<String> fetchData() async {
   await Geolocator.requestPermission();
   Position position = await Geolocator.getCurrentPosition(
@@ -67,7 +69,7 @@ class Address {
 
 Future<dynamic> getUser(String gusi) async {
   debugPrint(gusi);
-  var restaurant;
+  List<RestaurantModel> restaurantList = [];
   List<String> foodList = [
     "맛집",
     "고깃",
@@ -93,41 +95,16 @@ Future<dynamic> getUser(String gusi) async {
     final response = await http.get(uri, headers: header);
     debugPrint(response.body);
     String jsonRestaurantData = response.body;
-    Map<String, dynamic> restaurantList = jsonDecode(jsonRestaurantData);
-    restaurant = RestaurantModel.fromJson(restaurantList);
+    final restaurantJsonList =
+        (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
+
+    for (final model in restaurantJsonList) {
+      restaurantList
+          .add(RestaurantModel.fromNaverApiJson(model as Map<String, dynamic>));
+    }
     //return response.body;
   }
-  debugPrint(restaurant.toString());
+  for (final model in restaurantList) {
+    debugPrint(model.toString());
+  }
 }
-
-// Future<List> searchRestaurant(Position position) async {
-//   var url = Uri.parse(
-//       'https://dapi.kakao.com/v2/maps/sdk.js?appkey=$_kJavaScriptKey&libraries=services');
-//   var response = await http.get(url);
-//
-//   String latitude = position.latitude.toString();
-//   String longitude = position.longitude.toString();
-//   String address;
-//   final flutterJs = getJavascriptRuntime();
-//   final result = flutterJs.evaluate('''
-//
-//   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=$_kNativeAppKey&libraries=services"></script>
-//     var geocoder=new kakao.maps.services.Geocoder();
-//
-//     searchDetailAddrFromCoords($latitude, $longitude, function(result, status) {
-//         if (status === kakao.maps.services.Status.OK) {
-//             var detailAddr=result[0].address.address_name;
-//             console.log(detailAddr);
-//         }
-//     });
-//
-// function searchDetailAddrFromCoords($latitude, $longitude, callback) {
-//     geocoder.coord2Address($latitude, $longitude, callback);
-// }
-//
-// ''');
-//   print(latitude);
-//   print(longitude);
-//  // print(result.stringResult);
-//   return [];
-// }
