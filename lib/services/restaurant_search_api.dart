@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:what_should_i_eat/model/restaurant_model.dart';
 
-const int _naverAPIItemsMaxCount = 5;
+
 
 Future<String> fetchData() async {
   await Geolocator.requestPermission();
