@@ -174,18 +174,16 @@ class _WorldCupPageState extends State<WorldCupPage>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            GetBuilder<WorldCupProvider>(
-                              builder: (provider) {
-                                return Text(
-                                  provider.currentRound,
-                                  style: context.textTheme.headline6!.copyWith(
-                                    color: const Color(0xffa7a7a7),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                );
-                              }
-                            ),
+                            GetBuilder<WorldCupProvider>(builder: (provider) {
+                              return Text(
+                                provider.currentRound,
+                                style: context.textTheme.headline6!.copyWith(
+                                  color: const Color(0xffa7a7a7),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                            }),
                             Text(
                               'VS',
                               style: context.textTheme.headline4!.copyWith(
@@ -255,29 +253,6 @@ class ImageCard extends StatelessWidget {
     final CrossAxisAlignment crossAxisAlignment =
         isTopRight ? CrossAxisAlignment.end : CrossAxisAlignment.start;
 
-    final contentList = [
-      SizedBox(
-        // 뒤로가기 버튼의 위치는 비워둔다.
-        width: context.width - (isTopRight ? 120 : 48),
-        child: Text(
-          restaurantModel.name,
-          style: context.textTheme.headline4!.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: isTopRight ? TextAlign.right : TextAlign.left,
-        ),
-      ),
-      const SizedBox(height: 12),
-      Text(
-        restaurantModel.menu,
-        style: context.textTheme.subtitle1!.copyWith(
-          fontWeight: FontWeight.bold,
-          color: Colors.white70,
-        ),
-      ),
-      const SizedBox(height: 12),
-      CustomRatingBar(rating: restaurantModel.rating),
-    ];
     final content = Padding(
       padding: const EdgeInsets.all(24.0),
       child: AnimatedBuilder(
@@ -288,7 +263,31 @@ class ImageCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: crossAxisAlignment,
-          children: isTopRight ? contentList : List.of(contentList.reversed),
+          verticalDirection:
+              isTopRight ? VerticalDirection.down : VerticalDirection.up,
+          children: [
+            SizedBox(
+              // 뒤로가기 버튼의 위치는 비워둔다.
+              width: context.width - (isTopRight ? 120 : 48),
+              child: Text(
+                restaurantModel.name,
+                style: context.textTheme.headline4!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: isTopRight ? TextAlign.right : TextAlign.left,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              restaurantModel.menu,
+              style: context.textTheme.subtitle1!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 12),
+            CustomRatingBar(rating: restaurantModel.rating),
+          ],
         ),
       ),
     );

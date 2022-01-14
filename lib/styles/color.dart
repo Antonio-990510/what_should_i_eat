@@ -11,13 +11,13 @@ ColorScheme get lightColorScheme => const ColorScheme.light(
       onPrimary: Colors.black,
       onSecondary: Colors.black,
       onSurface: Colors.black,
-      onBackground: Colors.white,
+      onBackground: Colors.black,
       onError: Colors.white,
       brightness: Brightness.light,
     );
 
 ColorScheme get darkColorScheme => const ColorScheme.dark(
-      primary: Colors.black,
+      primary: Color(0xFF212121),
       primaryVariant: Color(0xFFFFADB0),
       secondary: Color(0xFFFFE600),
       secondaryVariant: Color(0xff82A79F),

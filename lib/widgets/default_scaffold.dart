@@ -6,15 +6,21 @@ class DefaultScaffold extends StatelessWidget {
   const DefaultScaffold({
     Key? key,
     this.noAppbar = false,
+    this.appBarBottomSpace = 24.0,
     this.actions = const [],
     this.padding,
     required this.body,
+    this.backgroundColor,
+    this.backButtonColor,
   }) : super(key: key);
 
   final bool noAppbar;
+  final double appBarBottomSpace;
   final List<Widget> actions;
   final EdgeInsets? padding;
   final Widget body;
+  final Color? backgroundColor;
+  final Color? backButtonColor;
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +29,16 @@ class DefaultScaffold extends StatelessWidget {
 
     Widget leading = const SizedBox();
     if (canPop) {
-      leading = const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: CustomBackButton(),
+      leading = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: CustomBackButton(iconColor: backButtonColor),
       );
     }
 
     final bool hasAppBarSpace = !noAppbar && (canPop || actions.isNotEmpty);
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: backgroundColor ?? colorScheme.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +64,7 @@ class DefaultScaffold extends StatelessWidget {
                   ],
                 ),
               ),
-            if (hasAppBarSpace) const SizedBox(height: 24),
+            if (hasAppBarSpace) SizedBox(height: appBarBottomSpace),
             Expanded(
               child: Padding(
                 padding: padding ?? const EdgeInsets.all(24.0),

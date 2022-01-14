@@ -45,17 +45,15 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    BarButton(
+                    PrimaryBarButton(
                       onPressed: () {},
                       iconData: Icons.messenger, // TODO(민성): kakao icon으로 수정
                       label: '카카오로 로그인',
                     ),
-                    BarButton(
+                    TextOnlyBarButton(
                       onPressed: () => Get.off(() => const HomePage()),
                       label: '비회원으로 이용하기',
                       labelColor: const Color(0xE6FFFFFF),
-                      color: Colors.transparent,
-                      overlayColor: Colors.white24,
                     ),
                   ],
                 ),

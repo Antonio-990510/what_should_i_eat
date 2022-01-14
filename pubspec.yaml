@@ -35,14 +35,23 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_js: ^0.5.0+5
   http: ^0.13.4
-  get: ^4.6.1
+  get:
+    git:
+      url: https://github.com/jja08111/getx.git
+      ref: what_should_i_eat_APP
   google_fonts: ^2.2.0
   flutter_rating_bar: ^4.0.0
+  path_provider: ^2.0.1
+  uuid: ^3.0.5
+  image_picker: ^0.8.4+4
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   network_image_mock: ^2.0.1
+  build_runner: ^2.1.7
+  json_serializable: ^6.1.3
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -62,10 +71,16 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/sample_food1.jpg
+    - assets/images/sample_food2.jpg
+    - assets/images/sample_food3.jpg
+    - assets/images/sample_food4.jpg
+    - assets/images/sample_food5.jpg
+    - assets/images/sample_food6.jpg
+    - assets/images/sample_food7.jpg
+    - assets/images/sample_food8.jpg
+    - assets/images/sample_food9.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

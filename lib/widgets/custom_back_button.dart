@@ -14,10 +14,12 @@ class CustomBackButton extends StatelessWidget {
     Key? key,
     this.style = CustomBackButtonStyle.normal,
     this.fillColor,
+    this.iconColor,
   }) : super(key: key);
 
   final CustomBackButtonStyle style;
   final Color? fillColor;
+  final Color? iconColor;
 
   /// Returns the appropriate "back" icon for the given `platform`.
   static IconData _getIconData(TargetPlatform platform) {
@@ -37,6 +39,7 @@ class CustomBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconButton = IconButton(
       icon: Icon(_getIconData(Theme.of(context).platform)),
+      color: iconColor,
       tooltip: MaterialLocalizations.of(context).backButtonTooltip,
       onPressed: () => Navigator.maybePop(context),
     );
