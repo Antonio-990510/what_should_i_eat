@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -93,7 +94,7 @@ Future<dynamic> getUser(String gusi) async {
     };
 
     final response = await http.get(uri, headers: header);
-    debugPrint(response.body);
+    //debugPrint(response.body);
     String jsonRestaurantData = response.body;
     final restaurantJsonList =
         (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
@@ -105,6 +106,36 @@ Future<dynamic> getUser(String gusi) async {
     //return response.body;
   }
   for (final model in restaurantList) {
-    debugPrint(model.toString());
+    //debugPrint(model.toString());
+  }
+  List<int> aa=[];
+  while(true){
+    var rnd=Random().nextInt(45)+1;
+    if(!aa.contains(rnd)){
+      aa.add(rnd);
+    }
+    if(aa.length==8) break;
+  }
+  for(int i=0;i<aa.length;i++){
+    debugPrint(restaurantList[aa[i]].getName());
+    final uri = Uri.parse(
+        "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[aa[i]].getName()}&display=3&start=1&sort=sim");
+
+    final Map<String, String> header = {
+      "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
+      "X-Naver-Client-Secret": "aSgxIylTMz",
+      "display": "1"
+    };
+
+    final response = await http.get(uri, headers: header);
+    debugPrint(response.body);
+    /*String jsonRestaurantData = response.body;
+    final restaurantJsonList =
+    (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
+
+    for (final model in restaurantJsonList) {
+      restaurantList
+          .add(RestaurantModel.fromNaverApiJson(model as Map<String, dynamic>));
+    }*/
   }
 }
