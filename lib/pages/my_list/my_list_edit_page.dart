@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:what_should_i_eat/constants.dart';
 import 'package:what_should_i_eat/model/my_list/my_list.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:what_should_i_eat/providers/my_list_provider.dart';
+import 'package:what_should_i_eat/utils/text_field_utils.dart';
 import 'package:what_should_i_eat/widgets/bar_button.dart';
 import 'package:what_should_i_eat/widgets/default_scaffold.dart';
-import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_bottom_sheet.dart';
+import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_field.dart';
 import 'package:what_should_i_eat/widgets/my_list/my_list_item_tile.dart';
 import 'package:what_should_i_eat/widgets/recheck_dialog.dart';
 
@@ -50,7 +49,7 @@ class _MyListEditPageState extends State<MyListEditPage> {
 
   void _handleAddButtonTap() async {
     await Get.bottomSheet(
-      MyListItemEditBottomSheet.createMode(
+      MyListItemEditField.createMode(
         onSubmitted: (item) {
           setState(() {
             _newItemList.add(item);
@@ -129,11 +128,7 @@ class _MyListEditPageState extends State<MyListEditPage> {
                     Expanded(
                       child: TextField(
                         controller: _titleController,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(
-                            kLengthLimitingOfMyListTitle,
-                          ),
-                        ],
+                        inputFormatters: defaultInputFormatters,
                         focusNode: _titleFocusNode,
                         style: context.textTheme.headline5!.copyWith(
                           color: context.theme.colorScheme.onPrimary,

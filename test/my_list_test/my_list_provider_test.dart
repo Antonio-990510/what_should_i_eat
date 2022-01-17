@@ -19,7 +19,7 @@ void main() {
 
     tearDown(() async {
       await removeMyListFile(PathProviderPlatform.instance);
-      Get.find<MyListProvider>().clear();
+      Get.deleteAll();
     });
 
     test('MyList 생성 테스트', () async {
@@ -31,7 +31,7 @@ void main() {
         ],
       );
 
-      await provider.create(list);
+      await provider.writeItem(list);
 
       final savedMyList = await getSavedMyList();
 
@@ -52,7 +52,7 @@ void main() {
       );
       final newList = list.deepCopyWith(title: '새로운');
 
-      await provider.create(list);
+      await provider.writeItem(list);
       await provider.updateItem(newList);
 
       final savedMyList = await getSavedMyList();

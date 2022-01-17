@@ -14,8 +14,8 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'utils/fake_path_provider_platform.dart';
-import 'utils/file_utils.dart';
+import '../utils/fake_path_provider_platform.dart';
+import '../utils/file_utils.dart';
 
 void main() {
   group('MyListCreatePage 테스트', () {
@@ -26,6 +26,29 @@ void main() {
     tearDown(() async {
       Get.deleteAll();
       await removeMyListFile(PathProviderPlatform.instance);
+    });
+
+    testWidgets('첫 번째 페이지에서 제목을 입력해야 다음 버튼이 보이고 탭할 수 있다.', (tester) async {
+      await tester.pumpWidget(const GetMaterialApp(home: MyListCreatePage()));
+
+      Future<void> tapContinueButton() async {
+        await tester.tap(find.text('다음'), warnIfMissed: false);
+      }
+
+      await tapContinueButton();
+      await tester.pumpAndSettle();
+      await tapContinueButton();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MyListCreatePage), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), '입력한 제목');
+      await tester.pumpAndSettle();
+      await tapContinueButton();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MyListCreatePage), findsNothing);
+      expect(find.byType(MyListCreateDetailPage), findsOneWidget);
     });
 
     testWidgets('`CreatePage`에서 만든 제목이 `CreateDetailPage`에서 전달되어 나타난다.',
@@ -50,7 +73,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), '항목1');
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.add_box_rounded));
+      await _tapAddIcon(tester);
       await tester.pumpAndSettle();
 
       Get.back();
@@ -128,7 +151,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), '항목1');
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.add_box_rounded));
+      await _tapAddIcon(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('항목1'), findsOneWidget);
@@ -157,7 +180,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), '새로운 항목');
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.add_box_rounded));
+      await _tapAddIcon(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('제일 마지막 항목'), findsOneWidget);
@@ -181,7 +204,7 @@ void main() {
 
         await tester.enterText(find.byType(TextField), '항목1');
         await tester.pump();
-        await tester.tap(find.byIcon(Icons.add_box_rounded));
+        await _tapAddIcon(tester);
         await tester.pumpAndSettle();
 
         await tester.tap(find.byType(SecondaryBarButton));
@@ -194,7 +217,44 @@ void main() {
         expect(find.text('새 리스트'), findsOneWidget);
       });
     });
+
+    testWidgets('두 번째 페이지에서 항목을 추가해야 저장 버튼이 보이고 탭할 수 있다.', (tester) async {
+      await tester.runAsync(() async {
+        Get.put(MyListProvider());
+        Get.put(CreateProvider()).title = '새 리스트';
+        await tester.pumpWidget(const GetMaterialApp(
+          home: MyListCreateDetailPage(),
+        ));
+
+        await tester.tap(find.byType(SecondaryBarButton), warnIfMissed: false);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byType(SecondaryBarButton), warnIfMissed: false);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byType(MyListCreateDetailPage),
+          findsOneWidget,
+          reason: '버튼이 보이지 않아 페이지가 그대로 있다.',
+        );
+
+        await tester.enterText(find.byType(TextField), '항목1');
+        await tester.pump();
+        await _tapAddIcon(tester);
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byType(SecondaryBarButton));
+        await tester.pumpAndSettle();
+        await Future.delayed(const Duration(milliseconds: 500));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(MyListCreateDetailPage), findsNothing);
+      });
+    });
   });
+}
+
+Future<void> _tapAddIcon(WidgetTester tester) async {
+  await tester.tap(find.byIcon(Icons.add_circle_outline_rounded));
 }
 
 class MockPlatform extends Mock

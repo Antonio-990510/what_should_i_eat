@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultScaffold(
+      resizeToAvoidBottomInset: false,
       actions: [
         IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
       ],

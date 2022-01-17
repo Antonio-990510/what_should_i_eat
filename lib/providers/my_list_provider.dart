@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:what_should_i_eat/model/my_list/my_list.dart';
+import 'package:what_should_i_eat/widgets/my_list/my_list_bottom_sheet.dart';
 
 class MyListProvider extends GetxController {
   static const _fileName = 'my_list.json';
@@ -13,9 +14,23 @@ class MyListProvider extends GetxController {
 
   File? _file;
 
+  List<MyList> get myLists => List.unmodifiable(_myLists);
   final List<MyList> _myLists = [];
 
-  List<MyList> get myLists => List.unmodifiable(_myLists);
+  GlobalKey<AnimatedListState>? _animatedListKey;
+
+  /// [AnimatedList]를 사용하기 위해 쓰이는 변수를 설정한다.
+  set animatedListKey(GlobalKey<AnimatedListState> key) {
+    _animatedListKey = key;
+  }
+
+  bool get isBottomSheetEditMode => _isBottomSheetEditMode;
+  bool _isBottomSheetEditMode = false;
+
+  set isBottomSheetEditMode(bool state) {
+    _isBottomSheetEditMode = state;
+    update();
+  }
 
   MyListProvider() {
     _readListFuture = _readListFromLocal();
@@ -59,13 +74,13 @@ class MyListProvider extends GetxController {
   /// [myList]를 파일에 저장하여 추가한다.
   ///
   // TODO(민성): Firebase와 연동하여 파일을 저장하여야 한다.
-  Future<void> create(MyList myList) async {
+  Future<void> writeItem(MyList myList) async {
     await _ensureReadingFutureIsDone();
 
-    final File file = await _localFile;
-    _myLists.add(myList);
+    _addToLists(myList);
     update();
 
+    final File file = await _localFile;
     await file.writeAsString(jsonEncode(_myLists));
   }
 
@@ -83,20 +98,56 @@ class MyListProvider extends GetxController {
     await file.writeAsString(jsonEncode(_myLists));
   }
 
-  Future<void> delete(MyList myList) async {
+  Future<void> deleteItem(MyList myList) async {
     await _ensureReadingFutureIsDone();
 
-    final File file = await _localFile;
-
-    _myLists.remove(myList);
+    _removeFromLists(myList);
     update();
 
     final myListMap = _myLists.map((e) => e.toJson()).toList();
+    final File file = await _localFile;
     await file.writeAsString(jsonEncode(myListMap));
   }
 
+  void _addToLists(MyList myList) {
+    _insertItemToAnimatedList(_myLists.length);
+    _myLists.add(myList);
+  }
+
+  void _removeFromLists(MyList myList) {
+    final index = _myLists.indexOf(myList);
+    _myLists.remove(myList);
+    if (_myLists.isEmpty && _isBottomSheetEditMode) {
+      _isBottomSheetEditMode = false;
+    }
+    _removeItemFromAnimatedList(myList, index);
+  }
+
+  void _insertItemToAnimatedList(int index) {
+    _animatedListKey?.currentState?.insertItem(index);
+  }
+
+  void _removeItemFromAnimatedList(MyList removedItem, int index) {
+    _animatedListKey?.currentState?.removeItem(
+      index,
+      (context, animation) {
+        return FadeOutTransition(
+          animation: animation,
+          child: MyListCard(isEditMode: true, myList: removedItem),
+        );
+      },
+    );
+  }
+
   @visibleForTesting
-  void clear() {
-    _myLists.clear();
+  void add(MyList myList) {
+    _addToLists(myList);
+    update();
+  }
+
+  @visibleForTesting
+  void remove(MyList myList) {
+    _removeFromLists(myList);
+    update();
   }
 }

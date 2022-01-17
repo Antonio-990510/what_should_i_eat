@@ -1,45 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:what_should_i_eat/constants.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
+import 'package:what_should_i_eat/utils/text_field_utils.dart';
 import 'package:what_should_i_eat/widgets/asset_or_file_image.dart';
 import 'package:what_should_i_eat/widgets/image_picker_bottom_sheet.dart';
 import 'package:what_should_i_eat/widgets/recheck_dialog.dart';
 
 typedef MyListItemSubmitCallback = void Function(MyListItem item);
 
-class MyListItemEditBottomSheet extends StatefulWidget {
+class MyListItemEditField extends StatefulWidget {
   /// [item]을 수정하는 바텀 시트를 만든다.
   ///
   /// 페이지를 벗어나면 편집된 새로운 [MyListItem]가 `result`로 반환되며 [item]은 수정되지 않는다.
-  const MyListItemEditBottomSheet({
+  const MyListItemEditField({
     Key? key,
     required this.item,
+    this.focusNode,
+    this.controller,
+    this.initImagePath,
+    this.onChangedImage,
+    this.enableRecheckingWhenPop = true,
   })  : onSubmitted = null,
         super(key: key);
 
   /// [MyListItem]을 계속해서 새로 생성하는 바텀 시트를 만든다.
   ///
   /// 새로 생성이 될때마다 [onSubmitted]이 호출된다. 절대 [onSubmitted]이 `null`이어서는 안된다.
-  MyListItemEditBottomSheet.createMode({
+  MyListItemEditField.createMode({
     Key? key,
     required this.onSubmitted,
+    this.focusNode,
+    this.controller,
+    this.initImagePath,
+    this.onChangedImage,
+    this.enableRecheckingWhenPop = true,
   })  : item = MyListItem(imagePath: kSampleFoodImagePaths.first, name: ''),
         assert(onSubmitted != null),
         super(key: key);
 
   final MyListItemSubmitCallback? onSubmitted;
   final MyListItem item;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
+  final void Function(String)? onChangedImage;
+  final String? initImagePath;
+  final bool enableRecheckingWhenPop;
 
   @override
-  State<MyListItemEditBottomSheet> createState() =>
-      _MyListItemEditBottomSheetState();
+  State<MyListItemEditField> createState() => _MyListItemEditFieldState();
 }
 
-class _MyListItemEditBottomSheetState extends State<MyListItemEditBottomSheet> {
-  final _controller = TextEditingController();
-  final _focusNode = FocusNode();
+class _MyListItemEditFieldState extends State<MyListItemEditField> {
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
   String _newImagePath = '';
 
   bool get _isItemUpdated =>
@@ -51,17 +65,25 @@ class _MyListItemEditBottomSheetState extends State<MyListItemEditBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _newImagePath = widget.item.imagePath;
-    _controller.text = widget.item.name;
+    _controller = widget.controller ?? TextEditingController();
+
+    _focusNode = widget.focusNode ?? FocusNode();
+    _newImagePath = widget.initImagePath ?? widget.item.imagePath;
+    if (_controller.text.isEmpty) {
+      _controller.text = widget.item.name;
+    }
     _controller.addListener(() {
       setState(() {});
     });
   }
 
+
+
   void _onTapImage() async {
     final result =
         await Get.bottomSheet<String?>(const ImagePickerBottomSheet());
     if (result != null) {
+      widget.onChangedImage?.call(result);
       setState(() {
         _newImagePath = result;
       });
@@ -69,6 +91,9 @@ class _MyListItemEditBottomSheetState extends State<MyListItemEditBottomSheet> {
   }
 
   Future<bool> _onWillPop() async {
+    if (!widget.enableRecheckingWhenPop) {
+      return true;
+    }
     // 항목이 수정되지 않으면 다이어로그를 띄우지 않는다.
     if (!_isItemUpdated) {
       return true;
@@ -104,8 +129,8 @@ class _MyListItemEditBottomSheetState extends State<MyListItemEditBottomSheet> {
 
   @override
   void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
+    if (widget.controller == null) _controller.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
     super.dispose();
   }
 
@@ -136,11 +161,7 @@ class _MyListItemEditBottomSheetState extends State<MyListItemEditBottomSheet> {
                 focusNode: _focusNode,
                 controller: _controller,
                 autofocus: true,
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(
-                    kLengthLimitingOfMyListTitle,
-                  ),
-                ],
+                inputFormatters: defaultInputFormatters,
                 decoration: const InputDecoration(
                   hintText: '이름 입력',
                   border: InputBorder.none,

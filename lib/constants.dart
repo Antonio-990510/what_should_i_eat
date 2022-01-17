@@ -11,5 +11,3 @@ const List<String> kSampleFoodImagePaths = [
   'assets/images/sample_food8.jpg',
   'assets/images/sample_food9.jpg',
 ];
-
-const int kLengthLimitingOfMyListTitle = 40;

@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:what_should_i_eat/constants.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:what_should_i_eat/widgets/asset_or_file_image.dart';
-import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_bottom_sheet.dart';
+import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_field.dart';
 
 void main() {
-  group('MyListItemEditBottomSheet 테스트', () {
+  group('MyListItemEditField 테스트', () {
     testWidgets('공백이 아닌 이름을 입력한 경우만 저장 버튼이 보인다.', (tester) async {
       final item = MyListItem(
         name: '항목',
@@ -16,7 +16,7 @@ void main() {
 
       await tester.pumpWidget(GetMaterialApp(home: Container()));
 
-      Get.bottomSheet(MyListItemEditBottomSheet(item: item));
+      Get.bottomSheet(MyListItemEditField(item: item));
       await tester.pumpAndSettle();
 
       expect(Get.isBottomSheetOpen, true);
@@ -51,7 +51,7 @@ void main() {
       await tester.pumpWidget(GetMaterialApp(home: Container()));
 
       final bottomSheetFuture =
-          Get.bottomSheet<MyListItem>(MyListItemEditBottomSheet(item: item));
+          Get.bottomSheet<MyListItem>(MyListItemEditField(item: item));
       await tester.pumpAndSettle();
 
       expect(Get.isBottomSheetOpen, true);
@@ -74,7 +74,7 @@ void main() {
       await tester.pumpWidget(GetMaterialApp(home: Container()));
 
       Get.bottomSheet<MyListItem>(
-        MyListItemEditBottomSheet(
+        MyListItemEditField(
           item: MyListItem(
             name: '항목',
             imagePath: kSampleFoodImagePaths.first,
@@ -101,7 +101,7 @@ void main() {
       await tester.pumpWidget(GetMaterialApp(home: Container()));
 
       Get.bottomSheet<MyListItem>(
-        MyListItemEditBottomSheet.createMode(
+        MyListItemEditField.createMode(
           onSubmitted: (item) {
             expect(item.name, '새로운항목');
           },
@@ -126,7 +126,7 @@ void main() {
       await tester.pumpWidget(GetMaterialApp(home: Container()));
 
       Get.bottomSheet<MyListItem>(
-        MyListItemEditBottomSheet(
+        MyListItemEditField(
           item: MyListItem(
             name: '항목',
             imagePath: kSampleFoodImagePaths.first,
@@ -144,6 +144,99 @@ void main() {
       await tester.pump();
 
       expect(Get.isBottomSheetOpen, true);
+    });
+
+    group('`initImagePath` 매개변수가', () {
+      testWidgets('`null`로 전달되면 `item`의 이미지가 보인다.', (tester) async {
+        final imagePath = kSampleFoodImagePaths[2];
+
+        await tester.pumpWidget(
+          GetMaterialApp(
+            home: Scaffold(
+              body: MyListItemEditField(
+                item: MyListItem(
+                  name: '항목',
+                  imagePath: imagePath,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.widget<AssetOrFileImage>(find.byType(AssetOrFileImage)).path,
+          imagePath,
+        );
+      });
+
+      testWidgets('전달되면 해당 이미지가 보인다.', (tester) async {
+        final imagePath = kSampleFoodImagePaths[2];
+        final initImagePath = kSampleFoodImagePaths[4];
+
+        await tester.pumpWidget(
+          GetMaterialApp(
+            home: Scaffold(
+              body: MyListItemEditField(
+                item: MyListItem(
+                  name: '항목',
+                  imagePath: imagePath,
+                ),
+                initImagePath: initImagePath,
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.widget<AssetOrFileImage>(find.byType(AssetOrFileImage)).path,
+          initImagePath,
+        );
+      });
+    });
+
+    group('`controller 매개 변수가', () {
+      testWidgets('`null`이면 `item`의 이름이 보인다.', (tester) async {
+        const name = '항목';
+
+        await tester.pumpWidget(
+          GetMaterialApp(
+            home: Scaffold(
+              body: MyListItemEditField(
+                item: MyListItem(
+                  name: name,
+                  imagePath: kSampleFoodImagePaths[2],
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text(name), findsOneWidget);
+      });
+
+      testWidgets('전달되면 `controller`의 텍스트가 보인다.', (tester) async {
+        final controller = TextEditingController()..text = '텍스트';
+
+        await tester.pumpWidget(
+          GetMaterialApp(
+            home: Scaffold(
+              body: MyListItemEditField(
+                item: MyListItem(
+                  name: '항목',
+                  imagePath: kSampleFoodImagePaths[2],
+                ),
+                controller: controller,
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text(controller.text), findsOneWidget);
+      });
     });
   });
 }
