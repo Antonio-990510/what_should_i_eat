@@ -1,18 +1,17 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:what_should_i_eat/constants.dart';
 import 'package:what_should_i_eat/model/my_list/my_list.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:what_should_i_eat/pages/home_page.dart';
 import 'package:what_should_i_eat/providers/my_list_provider.dart';
+import 'package:what_should_i_eat/utils/text_field_utils.dart';
 import 'package:what_should_i_eat/widgets/bar_button.dart';
 import 'package:what_should_i_eat/widgets/default_scaffold.dart';
-import 'package:what_should_i_eat/widgets/image_picker_bottom_sheet.dart';
 import 'package:what_should_i_eat/widgets/my_list/my_list_bottom_sheet.dart';
+import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_field.dart';
 import 'package:what_should_i_eat/widgets/my_list/my_list_item_tile.dart';
-import 'package:what_should_i_eat/widgets/asset_or_file_image.dart';
 
 class MyListCreatePage extends StatefulWidget {
   const MyListCreatePage({Key? key}) : super(key: key);
@@ -22,6 +21,7 @@ class MyListCreatePage extends StatefulWidget {
 }
 
 class _MyListCreatePageState extends State<MyListCreatePage> {
+  final _focusNode = FocusNode();
   final _controller = TextEditingController();
 
   @override
@@ -46,6 +46,7 @@ class _MyListCreatePageState extends State<MyListCreatePage> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -60,52 +61,62 @@ class _MyListCreatePageState extends State<MyListCreatePage> {
 
     final disableButton = _controller.text.isEmpty;
 
-    return DefaultScaffold(
-      backgroundColor: context.theme.colorScheme.primary,
-      backButtonColor: context.theme.colorScheme.onPrimary,
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      appBarBottomSpace: 0.0,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: AutoSizeText(
-              '생성할 리스트의 제목을 입력하세요',
-              maxLines: 2,
-              style: context.textTheme.headline5!.copyWith(
-                color: context.theme.colorScheme.onPrimary,
-                height: 1.4,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Expanded(
-            flex: 1,
-            child: TextField(
-              autofocus: true,
-              controller: _controller,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(
-                  kLengthLimitingOfMyListTitle,
+    return GestureDetector(
+      onTap: _focusNode.unfocus,
+      child: DefaultScaffold(
+        backgroundColor: context.theme.colorScheme.primary,
+        backButtonColor: context.theme.colorScheme.onPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        appBarBottomSpace: 0.0,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16.0),
+            Expanded(
+              flex: 2,
+              child: AutoSizeText(
+                '생성할 리스트의 제목을 입력하세요',
+                maxLines: 2,
+                style: context.textTheme.headline5!.copyWith(
+                  color: context.theme.colorScheme.onPrimary,
+                  height: 1.4,
                 ),
-              ],
-              style: context.textTheme.headline6!.copyWith(
-                color: context.theme.colorScheme.onPrimary,
-              ),
-              decoration: InputDecoration(
-                hintText: '제목 입력',
-                enabledBorder: inputBorder,
-                focusedBorder: inputBorder,
               ),
             ),
-          ),
-          const SizedBox(height: 24),
-          SecondaryBarButton(
-            onPressed: disableButton ? null : _onPressedNext,
-            label: '다음',
-          ),
-        ],
+            const SizedBox(height: 24),
+            Expanded(
+              flex: 1,
+              child: TextField(
+                focusNode: _focusNode,
+                autofocus: true,
+                controller: _controller,
+                inputFormatters: defaultInputFormatters,
+                style: context.textTheme.headline6!.copyWith(
+                  color: context.theme.colorScheme.onPrimary,
+                ),
+                decoration: InputDecoration(
+                  hintText: '제목 입력',
+                  enabledBorder: inputBorder,
+                  focusedBorder: inputBorder,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _MyAnimatedCrossFade(
+              firstChild: const SizedBox(height: 52.0, width: double.infinity),
+              secondChild: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: SecondaryBarButton(
+                  onPressed: disableButton ? () {} : _onPressedNext,
+                  label: '다음',
+                ),
+              ),
+              crossFadeState: disableButton
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -128,39 +139,20 @@ class MyListCreateDetailPageState extends State<MyListCreateDetailPage> {
   @visibleForTesting
   final ScrollController scrollController = ScrollController();
 
-  bool _enableAddButton = false;
-
   @override
   void initState() {
     super.initState();
     final provider = Get.find<CreateProvider>();
     _textController.text = provider.textControllerText;
     _textController.addListener(() {
-      setState(() {
-        _enableAddButton = _textController.text.isNotEmpty;
-      });
       provider.textControllerText = _textController.text;
     });
   }
 
-  void _showImagePicker() async {
-    final result = await Get.bottomSheet(const ImagePickerBottomSheet());
-    if (result != null) {
-      Get.find<CreateProvider>().selectedImagePath = result;
-    }
-  }
 
-  void _addItemToList() {
-    if (_textController.text.isEmpty) {
-      _focusNode.requestFocus();
-      return;
-    }
+  void _addItemToList(MyListItem listItem) {
     final provider = Get.find<CreateProvider>();
-    provider.add(MyListItem(
-      name: _textController.text,
-      imagePath: provider.selectedImagePath,
-    ));
-    _textController.clear();
+    provider.add(listItem);
     _focusNode.requestFocus();
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await scrollController.animateTo(
@@ -185,7 +177,7 @@ class MyListCreateDetailPageState extends State<MyListCreateDetailPage> {
     final result =
         MyList(title: createProvider.title, items: createProvider.list);
 
-    await Get.find<MyListProvider>().create(result);
+    await Get.find<MyListProvider>().writeItem(result);
 
     Get.offUntil(GetPageRoute(page: () => const HomePage()), (route) => false);
     Get.bottomSheet(const MyListBottomSheet(scrollToLast: true));
@@ -193,8 +185,9 @@ class MyListCreateDetailPageState extends State<MyListCreateDetailPage> {
 
   @override
   void dispose() {
-    _textController.dispose();
     scrollController.dispose();
+    _textController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -213,7 +206,7 @@ class MyListCreateDetailPageState extends State<MyListCreateDetailPage> {
             Expanded(
               child: GetBuilder<CreateProvider>(builder: (provider) {
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.only(top: 16.0, bottom: 4.0),
                   controller: scrollController,
                   itemCount: provider.list.length + 1,
                   itemBuilder: (_, index) {
@@ -237,6 +230,7 @@ class MyListCreateDetailPageState extends State<MyListCreateDetailPage> {
 
                     return MyListItemTile(
                       key: index == provider.list.length ? _lastItemKey : null,
+                      onTap: _focusNode.unfocus,
                       onDismissed: (_) => _removeItem(item),
                       onUpdate: (oldItem, newItem) {
                         setState(() {
@@ -249,90 +243,60 @@ class MyListCreateDetailPageState extends State<MyListCreateDetailPage> {
                 );
               }),
             ),
-            GestureDetector(
-              onTap: _focusNode.requestFocus,
-              child: Container(
+            GetBuilder(builder: (CreateProvider provider) {
+              return Container(
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
                       color: context.theme.colorScheme.primary,
-                      blurRadius: 16.0,
-                      spreadRadius: 16.0,
-                      offset: const Offset(0.0, -8.0),
+                      blurRadius: 4.0,
+                      spreadRadius: 4.0,
+                      offset: const Offset(0.0, -2.0),
                     ),
                   ],
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: _textController.text.isEmpty
-                          ? context.isDarkMode
-                              ? Colors.white38
-                              : Colors.black38
-                          : context.theme.colorScheme.background,
-                      width: 2.0,
+                child: _MyAnimatedCrossFade(
+                  crossFadeState: provider.list.isEmpty
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild:
+                      const SizedBox(height: 20, width: double.infinity),
+                  secondChild: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+                    child: SecondaryBarButton(
+                      onPressed: provider.list.isEmpty ? () {} : _saveList,
+                      label: '저장',
                     ),
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  margin: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: _showImagePicker,
-                        child: GetBuilder<CreateProvider>(
-                          builder: (provider) => AssetOrFileImage(
-                            radius: 14.0,
-                            height: 48.0,
-                            width: 48.0,
-                            path: provider.selectedImagePath,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12.0),
-                      Expanded(
-                        child: TextField(
-                          autofocus: true,
-                          focusNode: _focusNode,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(
-                              kLengthLimitingOfMyListTitle,
-                            ),
-                          ],
-                          controller: _textController,
-                          style: context.textTheme.subtitle1!.copyWith(
-                              color: context.theme.colorScheme.onPrimary),
-                          onSubmitted: (_) => _addItemToList(),
-                          decoration: const InputDecoration(
-                            hintText: '추가할 항목의 이름 입력',
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: _enableAddButton ? _addItemToList : null,
-                        icon: Icon(
-                          Icons.add_box_rounded,
-                          size: 28,
-                          color: _enableAddButton
-                              ? context.theme.colorScheme.background
-                              : context.isDarkMode
-                                  ? Colors.white38
-                                  : Colors.black38,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
+              );
+            }),
+            Container(
+              decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 12.0,
+                    spreadRadius: 2.0,
+                    offset: Offset(0.0, -2.0),
+                  ),
+                ],
+                color: context.theme.colorScheme.primary,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: GetBuilder(builder: (CreateProvider provider) {
-                return SecondaryBarButton(
-                  onPressed: provider.list.isEmpty ? null : _saveList,
-                  label: '저장',
-                );
-              }),
+              child: GetBuilder<CreateProvider>(
+                builder: (provider) {
+                  return MyListItemEditField.createMode(
+                    focusNode: _focusNode,
+                    onSubmitted: _addItemToList,
+                    controller: _textController,
+                    onChangedImage: (newPath) {
+                      provider.selectedImagePath = newPath;
+                    },
+                    initImagePath: provider.selectedImagePath,
+                    enableRecheckingWhenPop: false,
+                  );
+                }
+              ),
             ),
           ],
         ),
@@ -371,6 +335,7 @@ class CreateProvider extends GetxController {
 
   void add(MyListItem item) {
     _list.add(item);
+    update();
   }
 
   void remove(MyListItem item) {
@@ -383,4 +348,22 @@ class CreateProvider extends GetxController {
     if (index == -1) return;
     _list[index] = newItem;
   }
+}
+
+class _MyAnimatedCrossFade extends AnimatedCrossFade {
+  const _MyAnimatedCrossFade({
+    Key? key,
+    required Widget firstChild,
+    required Widget secondChild,
+    required CrossFadeState crossFadeState,
+  }) : super(
+          key: key,
+          firstChild: firstChild,
+          secondChild: secondChild,
+          duration: kThemeChangeDuration,
+          secondCurve: Curves.easeOut,
+          sizeCurve: Curves.easeOut,
+          firstCurve: Curves.easeOut,
+          crossFadeState: crossFadeState,
+        );
 }

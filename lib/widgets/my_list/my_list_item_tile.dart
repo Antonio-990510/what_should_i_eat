@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:what_should_i_eat/widgets/asset_or_file_image.dart';
-import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_bottom_sheet.dart';
+import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_field.dart';
 
 typedef MyListItemUpdateCallback = void Function(
     MyListItem oldItem, MyListItem newItem);
@@ -10,18 +10,21 @@ typedef MyListItemUpdateCallback = void Function(
 class MyListItemTile extends StatelessWidget {
   const MyListItemTile({
     Key? key,
+    this.onTap,
     required this.onUpdate,
     required this.item,
     required this.onDismissed,
   }) : super(key: key);
 
+  final VoidCallback? onTap;
   final MyListItemUpdateCallback onUpdate;
   final MyListItem item;
   final DismissDirectionCallback onDismissed;
 
   void _onTap() async {
+    onTap?.call();
     final newItem = await Get.bottomSheet<MyListItem?>(
-      MyListItemEditBottomSheet(item: item),
+      MyListItemEditField(item: item),
       enableDrag: false,
     );
     if (newItem != null) {
@@ -43,9 +46,9 @@ class MyListItemTile extends StatelessWidget {
             children: [
               AssetOrFileImage(
                 path: item.imagePath,
-                radius: 6,
-                width: 36,
-                height: 36,
+                radius: 8,
+                width: 40,
+                height: 40,
               ),
               const SizedBox(width: 12.0),
               Text(

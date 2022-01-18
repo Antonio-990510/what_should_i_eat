@@ -12,6 +12,7 @@ class DefaultScaffold extends StatelessWidget {
     required this.body,
     this.backgroundColor,
     this.backButtonColor,
+    this.resizeToAvoidBottomInset = true,
   }) : super(key: key);
 
   final bool noAppbar;
@@ -21,6 +22,7 @@ class DefaultScaffold extends StatelessWidget {
   final Widget body;
   final Color? backgroundColor;
   final Color? backButtonColor;
+  final bool resizeToAvoidBottomInset;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class DefaultScaffold extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: backgroundColor ?? colorScheme.background,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

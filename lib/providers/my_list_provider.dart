@@ -13,9 +13,16 @@ class MyListProvider extends GetxController {
 
   File? _file;
 
+  List<MyList> get myLists => List.unmodifiable(_myLists);
   final List<MyList> _myLists = [];
 
-  List<MyList> get myLists => List.unmodifiable(_myLists);
+  bool get isBottomSheetEditMode => _isBottomSheetEditMode;
+  bool _isBottomSheetEditMode = false;
+
+  set isBottomSheetEditMode(bool state) {
+    _isBottomSheetEditMode = state;
+    update();
+  }
 
   MyListProvider() {
     _readListFuture = _readListFromLocal();
@@ -56,17 +63,21 @@ class MyListProvider extends GetxController {
     }
   }
 
+  Future<void> _writeListJsonFile() async {
+    final File file = await _localFile;
+    await file.writeAsString(jsonEncode(_myLists));
+  }
+
   /// [myList]를 파일에 저장하여 추가한다.
   ///
   // TODO(민성): Firebase와 연동하여 파일을 저장하여야 한다.
-  Future<void> create(MyList myList) async {
+  Future<void> writeItem(MyList myList) async {
     await _ensureReadingFutureIsDone();
 
-    final File file = await _localFile;
-    _myLists.add(myList);
+    _addToLists(myList);
     update();
 
-    await file.writeAsString(jsonEncode(_myLists));
+    _writeListJsonFile();
   }
 
   /// [myList]와 `id`가 동일한 데이터를 전달된 [myList]로 교체한다.
@@ -79,24 +90,47 @@ class MyListProvider extends GetxController {
     _myLists[index] = myList;
     update();
 
-    final File file = await _localFile;
-    await file.writeAsString(jsonEncode(_myLists));
+    _writeListJsonFile();
   }
 
-  Future<void> delete(MyList myList) async {
+  Future<void> deleteItem(MyList myList) async {
     await _ensureReadingFutureIsDone();
 
-    final File file = await _localFile;
-
-    _myLists.remove(myList);
+    _removeFromLists(myList);
     update();
 
-    final myListMap = _myLists.map((e) => e.toJson()).toList();
-    await file.writeAsString(jsonEncode(myListMap));
+    _writeListJsonFile();
+  }
+
+  Future<void> reorder(int fromIndex, int toIndex) async {
+    await _ensureReadingFutureIsDone();
+
+    final myList = _myLists.removeAt(fromIndex);
+    _myLists.insert(toIndex, myList);
+
+    _writeListJsonFile();
+  }
+
+  void _addToLists(MyList myList) {
+    _myLists.add(myList);
+  }
+
+  void _removeFromLists(MyList myList) {
+    _myLists.remove(myList);
+    if (_myLists.isEmpty && _isBottomSheetEditMode) {
+      _isBottomSheetEditMode = false;
+    }
   }
 
   @visibleForTesting
-  void clear() {
-    _myLists.clear();
+  void add(MyList myList) {
+    _addToLists(myList);
+    update();
+  }
+
+  @visibleForTesting
+  void remove(MyList myList) {
+    _removeFromLists(myList);
+    update();
   }
 }

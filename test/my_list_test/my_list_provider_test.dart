@@ -19,7 +19,7 @@ void main() {
 
     tearDown(() async {
       await removeMyListFile(PathProviderPlatform.instance);
-      Get.find<MyListProvider>().clear();
+      Get.deleteAll();
     });
 
     test('MyList 생성 테스트', () async {
@@ -31,7 +31,7 @@ void main() {
         ],
       );
 
-      await provider.create(list);
+      await provider.writeItem(list);
 
       final savedMyList = await getSavedMyList();
 
@@ -52,7 +52,7 @@ void main() {
       );
       final newList = list.deepCopyWith(title: '새로운');
 
-      await provider.create(list);
+      await provider.writeItem(list);
       await provider.updateItem(newList);
 
       final savedMyList = await getSavedMyList();
@@ -64,6 +64,46 @@ void main() {
       expect(provider.myLists.first.title, newList.title);
       expect(provider.myLists.first.items.first.name, newList.items.first.name);
       expect(provider.myLists.length, 1);
+    });
+
+    test('MyList reorder 함수', () async {
+      final provider = Get.put(MyListProvider());
+      final first = MyList(
+        title: '첫 번째',
+        items: [
+          MyListItem(imagePath: kSampleFoodImagePaths.first, name: '항목'),
+        ],
+      );
+      final second = MyList(
+        title: '두 번째',
+        items: [
+          MyListItem(imagePath: kSampleFoodImagePaths.first, name: '항목'),
+        ],
+      );
+      final third = MyList(
+        title: '세 번째',
+        items: [
+          MyListItem(imagePath: kSampleFoodImagePaths.first, name: '항목'),
+        ],
+      );
+
+      await provider.writeItem(first);
+      await provider.writeItem(second);
+      await provider.writeItem(third);
+      final beforeReordering = await getSavedMyList();
+
+      expect(
+        beforeReordering.map((e) => e.title),
+        orderedEquals([first.title, second.title, third.title]),
+      );
+
+      await provider.reorder(0, 2);
+      final afterReordering = await getSavedMyList();
+
+      expect(
+        afterReordering.map((e) => e.title),
+        orderedEquals([second.title, third.title, first.title]),
+      );
     });
   });
 }

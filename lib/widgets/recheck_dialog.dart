@@ -22,6 +22,7 @@ class RecheckDialog extends StatelessWidget {
         title,
         style: context.textTheme.subtitle1!.copyWith(
           color: context.theme.colorScheme.onSurface,
+          height: 1.5,
         ),
       ),
       actions: [

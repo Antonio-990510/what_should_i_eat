@@ -32,7 +32,6 @@ class ImagePickerBottomSheet extends StatelessWidget {
           color: Colors.black,
         ),
       ),
-      action: null,
       body: SizedBox(
         height: 240,
         child: GridView.builder(

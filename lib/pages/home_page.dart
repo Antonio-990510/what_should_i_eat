@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultScaffold(
+      resizeToAvoidBottomInset: false,
       actions: [
         IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
       ],
@@ -46,7 +47,10 @@ class HomePage extends StatelessWidget {
               children: [
                 PrimaryBarButton(
                   onPressed: () {
-                    Get.bottomSheet(const MyListBottomSheet());
+                    Get.bottomSheet(
+                      const MyListBottomSheet(),
+                      enableDrag: false,
+                    );
                   },
                   label: '나의 리스트에서 랜덤 찾기',
                 ),

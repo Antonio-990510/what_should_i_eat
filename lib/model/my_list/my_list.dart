@@ -17,7 +17,8 @@ class MyList {
   MyList({
     required this.title,
     required List<MyListItem> items,
-  })  : id = const Uuid().v1(),
+  })  : assert(items.isNotEmpty),
+        id = const Uuid().v1(),
         _items = items;
 
   MyList._({
