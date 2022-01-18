@@ -333,6 +333,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.1"
+  implicitly_animated_reorderable_list:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: what_should_i_eat
+      resolved-ref: fc63cd2c7135460627fbe584849418d60bae0d08
+      url: "https://github.com/jja08111/implicitly_animated_reorderable_list.git"
+    source: git
+    version: "0.4.2"
   io:
     dependency: transitive
     description:

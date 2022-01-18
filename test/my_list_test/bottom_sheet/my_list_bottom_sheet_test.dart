@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,10 @@ import 'package:what_should_i_eat/model/my_list/my_list.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:what_should_i_eat/providers/my_list_provider.dart';
 import 'package:what_should_i_eat/widgets/my_list/my_list_bottom_sheet.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+
+import '../utils/fake_path_provider_platform.dart';
+import '../utils/file_utils.dart';
 
 final MyList sampleMyList = MyList(
   title: '기존',
@@ -71,5 +76,75 @@ void main() {
 
       expect(provider.isBottomSheetEditMode, false);
     });
+
+    group('reordering', () {
+      final first = MyList(
+        title: '첫 번째',
+        items: [
+          MyListItem(imagePath: kSampleFoodImagePaths.first, name: '항목'),
+        ],
+      );
+      final second = MyList(
+        title: '두 번째',
+        items: [
+          MyListItem(imagePath: kSampleFoodImagePaths.first, name: '항목'),
+        ],
+      );
+      final third = MyList(
+        title: '세 번째',
+        items: [
+          MyListItem(imagePath: kSampleFoodImagePaths.first, name: '항목'),
+        ],
+      );
+
+      setUp(() async {
+        PathProviderPlatform.instance = FakePathProviderPlatform();
+      });
+
+      tearDown(() async {
+        Get.deleteAll();
+        await removeMyListFile(PathProviderPlatform.instance);
+      });
+
+      testWidgets('편집 모드에서는 카드를 길게 눌러 순서를 변경할 수 있다.', (tester) async {
+        final provider = Get.put(MyListProvider())
+          ..add(first)
+          ..add(second)
+          ..add(third);
+
+        await tester.pumpWidget(const GetMaterialApp(home: Scaffold()));
+
+        Get.bottomSheet(const MyListBottomSheet());
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.edit_rounded));
+        await tester.pumpAndSettle();
+
+        expect(provider.isBottomSheetEditMode, true);
+        expect(provider.myLists, orderedEquals([first, second, third]));
+
+        await longPressDrag(
+          tester,
+          tester.getCenter(find.text(first.title)),
+          tester.getBottomRight(find.text(third.title)) + const Offset(100, 0),
+        );
+        await tester.pumpAndSettle();
+        await tester.runAsync(() async {
+          await Future.delayed(const Duration(milliseconds: 100));
+        });
+        await tester.pumpAndSettle();
+
+        expect(provider.myLists, orderedEquals([second, third, first]));
+      });
+    });
   });
+}
+
+Future<void> longPressDrag(
+    WidgetTester tester, Offset start, Offset end) async {
+  final TestGesture drag = await tester.startGesture(start);
+  await tester.pump(kLongPressTimeout + kPressTimeout);
+  await drag.moveTo(end);
+  await tester.pump(kPressTimeout);
+  await drag.up();
 }

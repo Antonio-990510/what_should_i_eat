@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:implicitly_animated_reorderable_list/implicitly_animated_reorderable_list.dart';
 import 'package:what_should_i_eat/model/my_list/my_list.dart';
 import 'package:what_should_i_eat/pages/my_list/my_list_create_page.dart';
 import 'package:what_should_i_eat/pages/my_list/my_list_edit_page.dart';
@@ -20,16 +22,11 @@ class MyListBottomSheet extends StatefulWidget {
 }
 
 class _MyListBottomSheetState extends State<MyListBottomSheet> {
-  final GlobalKey<AnimatedListState> _animatedListKey =
-      GlobalKey<AnimatedListState>();
   final ScrollController controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
-
-    final myListProvider = Get.find<MyListProvider>();
-    myListProvider.animatedListKey = _animatedListKey;
     if (widget.scrollToLast) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         controller.animateTo(
@@ -78,34 +75,37 @@ class _MyListBottomSheetState extends State<MyListBottomSheet> {
                       child: Text(
                         '오른쪽 상단의 생성 버튼을 눌러 나의 리스트를 만들어보세요.',
                         style: context.textTheme.subtitle1!.copyWith(
-                          color:
-                              context.theme.colorScheme.onSurface.withOpacity(
-                            0.36,
-                          ),
+                          color: context.theme.colorScheme.onSurface
+                              .withOpacity(0.36),
                           height: 1.4,
                         ),
                         textScaleFactor: 1.0,
                       ),
                     )
-                  : AnimatedList(
-                      key: _animatedListKey,
+                  : ImplicitlyAnimatedReorderableList<MyList>(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                       controller: controller,
-                      padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
-                      initialItemCount: myLists.length,
                       scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemBuilder: (_, index, animation) => FadeOutTransition(
-                        animation: animation,
-                        child: Padding(
-                          padding: myLists.length - 1 == index
-                              ? EdgeInsets.zero
-                              : const EdgeInsets.only(right: 8.0),
-                          child: MyListCard(
-                            myList: myLists[index],
-                            isEditMode: provider.isBottomSheetEditMode,
-                          ),
-                        ),
-                      ),
+                      items: myLists,
+                      areItemsTheSame: (a, b) => a.id == b.id,
+                      onReorderFinished: (_, from, to, __) {
+                        Get.find<MyListProvider>().reorder(from, to);
+                      },
+                      itemBuilder: (_, listAnimation, myList, __) {
+                        return Reorderable(
+                          key: ValueKey(myList.id),
+                          builder: (_, dragAnimation, __) {
+                            return _CardWrapper(
+                              listAnimation: listAnimation,
+                              child: _MyListCard(
+                                myList: myList,
+                                dragAnimation: dragAnimation,
+                                isEditMode: provider.isBottomSheetEditMode,
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
             ),
           );
@@ -180,21 +180,46 @@ class _Title extends StatelessWidget {
   }
 }
 
-class MyListCard extends StatefulWidget {
-  const MyListCard({
+class _CardWrapper extends StatelessWidget {
+  const _CardWrapper({
+    Key? key,
+    required this.listAnimation,
+    required this.child,
+  }) : super(key: key);
+
+  final Animation<double> listAnimation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeOutTransition(
+      animation: listAnimation,
+      child: Handle(
+        capturePointer: false,
+        delay: kLongPressTimeout,
+        child: child,
+      ),
+    );
+  }
+}
+
+class _MyListCard extends StatefulWidget {
+  const _MyListCard({
     Key? key,
     required this.myList,
     required this.isEditMode,
+    required this.dragAnimation,
   }) : super(key: key);
 
   final bool isEditMode;
   final MyList myList;
+  final Animation<double> dragAnimation;
 
   @override
-  State<MyListCard> createState() => _MyListCardState();
+  State<_MyListCard> createState() => _MyListCardState();
 }
 
-class _MyListCardState extends State<MyListCard> {
+class _MyListCardState extends State<_MyListCard> {
   void _handleRemoveButton() async {
     final bool? result = await Get.dialog(RecheckDialog(
       title: '${widget.myList.title}을(를) 삭제할까요?',
@@ -208,33 +233,59 @@ class _MyListCardState extends State<MyListCard> {
   @override
   Widget build(BuildContext context) {
     const borderRadius = BorderRadius.all(Radius.circular(16.0));
+    final cardColor = HSLColor.fromColor(context.theme.colorScheme.background)
+        .withLightness(0.85)
+        .toColor();
+
     return Stack(
       children: [
         AnimatedPadding(
           duration: kThemeChangeDuration,
           curve: Curves.easeOut,
           padding: widget.isEditMode
-              ? const EdgeInsets.only(right: 20.0, top: 20.0)
+              ? const EdgeInsets.only(right: 12.0, top: 20.0)
               : const EdgeInsets.only(top: 20.0),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: borderRadius,
-              onLongPress: widget.isEditMode
-                  ? null
-                  : () => Get.to(() => MyListEditPage(myList: widget.myList)),
-              onTap: widget.isEditMode ? null : () {},
-              child: Container(
-                padding: const EdgeInsets.all(24.0),
+          child: AnimatedBuilder(
+            animation: widget.dragAnimation,
+            builder: (BuildContext context, Widget? child) {
+              final onSurfaceColor = context.theme.colorScheme.onSurface.withOpacity(0.12);
+
+              return Container(
                 decoration: BoxDecoration(
                   borderRadius: borderRadius,
-                  color: context.theme.colorScheme.background.withOpacity(0.4),
+                  color: cardColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: onSurfaceColor,
+                      blurRadius: widget.dragAnimation.value * 4.0,
+                      spreadRadius: widget.dragAnimation.value * 4.0,
+                    ),
+                    BoxShadow(
+                      color: cardColor,
+                      spreadRadius: widget.dragAnimation.value * 2.0,
+                    ),
+                  ],
                 ),
-                child: Text(
-                  widget.myList.title,
-                  style: context.textTheme.subtitle1!
-                      .copyWith(color: Colors.black),
-                  textScaleFactor: 1.0,
+                margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: child,
+              );
+            },
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: borderRadius,
+                onLongPress: widget.isEditMode
+                    ? null
+                    : () => Get.to(() => MyListEditPage(myList: widget.myList)),
+                onTap: widget.isEditMode ? null : () {},
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Text(
+                    widget.myList.title,
+                    style: context.textTheme.subtitle1!
+                        .copyWith(color: Colors.black),
+                    textScaleFactor: 1.0,
+                  ),
                 ),
               ),
             ),
