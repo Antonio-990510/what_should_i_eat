@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:what_should_i_eat/constants.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
-import 'package:what_should_i_eat/widgets/asset_or_file_image.dart';
+import 'package:what_should_i_eat/widgets/adaptive_image.dart';
 import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_field.dart';
 
 void main() {
@@ -34,7 +34,7 @@ void main() {
       expect(find.byType(IconButton), findsOneWidget);
 
       // 사진만 수정한 경우
-      await tester.tap(find.byType(AssetOrFileImage).last);
+      await tester.tap(find.byType(AdaptiveImage).last);
       await tester.pumpAndSettle();
       await tester.tap(find.byType(Image).last);
       await tester.pumpAndSettle();
@@ -165,7 +165,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          tester.widget<AssetOrFileImage>(find.byType(AssetOrFileImage)).path,
+          tester.widget<AdaptiveImage>(find.byType(AdaptiveImage)).path,
           imagePath,
         );
       });
@@ -190,7 +190,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          tester.widget<AssetOrFileImage>(find.byType(AssetOrFileImage)).path,
+          tester.widget<AdaptiveImage>(find.byType(AdaptiveImage)).path,
           initImagePath,
         );
       });

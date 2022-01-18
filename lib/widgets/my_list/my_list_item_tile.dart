@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
-import 'package:what_should_i_eat/widgets/asset_or_file_image.dart';
+import 'package:what_should_i_eat/widgets/adaptive_image.dart';
 import 'package:what_should_i_eat/widgets/my_list/my_list_item_edit_field.dart';
 
 typedef MyListItemUpdateCallback = void Function(
@@ -44,7 +44,7 @@ class MyListItemTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
           child: Row(
             children: [
-              AssetOrFileImage(
+              AdaptiveImage(
                 path: item.imagePath,
                 radius: 8,
                 width: 40,

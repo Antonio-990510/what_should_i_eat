@@ -1,10 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:implicitly_animated_reorderable_list/implicitly_animated_reorderable_list.dart';
 import 'package:what_should_i_eat/model/my_list/my_list.dart';
+import 'package:what_should_i_eat/pages/loading_page.dart';
 import 'package:what_should_i_eat/pages/my_list/my_list_create_page.dart';
 import 'package:what_should_i_eat/pages/my_list/my_list_edit_page.dart';
+import 'package:what_should_i_eat/pages/search_result_page.dart';
 import 'package:what_should_i_eat/providers/my_list_provider.dart';
 import 'package:what_should_i_eat/widgets/default_bottom_sheet.dart';
 import 'package:what_should_i_eat/widgets/recheck_dialog.dart';
@@ -230,6 +234,21 @@ class _MyListCardState extends State<_MyListCard> {
     }
   }
 
+  void _handleTap() async {
+    // 먼저 bottom sheet 를 없앤다.
+    Get.back();
+    Get.to(() => const LoadingPage());
+    await Future.delayed(const Duration(seconds: 2));
+
+    final list = widget.myList.toRestaurantList();
+    Get.off(
+      () => SearchResultPage(
+        restaurantModel: list[Random().nextInt(list.length)],
+        retryLabel: '이 항목 제외하고 다시 찾기',
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const borderRadius = BorderRadius.all(Radius.circular(16.0));
@@ -277,7 +296,7 @@ class _MyListCardState extends State<_MyListCard> {
                 onLongPress: widget.isEditMode
                     ? null
                     : () => Get.to(() => MyListEditPage(myList: widget.myList)),
-                onTap: widget.isEditMode ? null : () {},
+                onTap: widget.isEditMode ? null : _handleTap,
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Text(

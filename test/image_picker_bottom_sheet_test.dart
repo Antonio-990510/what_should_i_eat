@@ -8,7 +8,7 @@ import 'package:what_should_i_eat/constants.dart';
 import 'package:what_should_i_eat/widgets/image_picker_bottom_sheet.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'my_list_test/utils/fake_path_provider_platform.dart';
+import 'utils/fake_path_provider_platform.dart';
 
 void main() {
   group('ImagePickerBottomSheet 테스트', () {
