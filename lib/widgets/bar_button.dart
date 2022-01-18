@@ -54,8 +54,13 @@ class _BarButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (iconData != null) Icon(iconData!, size: 16),
-            if (iconData != null) const SizedBox(width: 8),
+            if (iconData != null)
+              Icon(
+                iconData!,
+                size: 16,
+                color: context.theme.colorScheme.onPrimary.withOpacity(0.7),
+              ),
+            if (iconData != null) const SizedBox(width: 16),
             Text(label),
           ],
         ),
