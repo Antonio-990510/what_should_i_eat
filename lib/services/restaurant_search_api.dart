@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:google_place/google_place.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:what_should_i_eat/model/restaurant_model.dart';
-
-
 
 Future<String> fetchData() async {
   await Geolocator.requestPermission();
@@ -106,20 +106,39 @@ Future<dynamic> getUser(String gusi) async {
     //return response.body;
   }
   for (final model in restaurantList) {
-    //debugPrint(model.toString());
+    debugPrint(model.toString());
   }
-  List<int> aa=[];
-  while(true){
-    var rnd=Random().nextInt(45)+1;
-    if(!aa.contains(rnd)){
-      aa.add(rnd);
+  List<int> selectedRestaurantList = [];
+  while (true) {
+    var rnd = Random().nextInt(45) + 1;
+    if (!selectedRestaurantList.contains(rnd)) {
+      selectedRestaurantList.add(rnd);
+      debugPrint(selectedRestaurantList.toString());
     }
-    if(aa.length==8) break;
+    if (selectedRestaurantList.length == 8) break;
   }
-  for(int i=0;i<aa.length;i++){
-    debugPrint(restaurantList[aa[i]].getName());
+
+  /* 구글API
+  var googlePlace = GooglePlace("AIzaSyC6vX3AEvK755bv1e4vQs4OjfC86iNeBIk");
+  var findRestaurant = await googlePlace.search.getNearBySearchJson(
+      Location(lat: 37.43331166666667, lng: 126.90393666666667), 2500,
+      type: "restaurant", keyword: "");
+  debugPrint(findRestaurant);
+
+  DetailsResponse? detail = await googlePlace.details.get("ChIJN1t_tDeuEmsRUsoyG83frY4",
+      fields: "name,rating,formatted_phone_number");
+
+  for (int i = 0; i < selectedRestaurantList.length; i++) {
+    String? result = await googlePlace.photos.getJson(
+        "${restaurantList[selectedRestaurantList[i]]}", 1240, 400);
+    //debugPrint(result.toString());
+  }
+*/
+
+  for (int i = 0; i < selectedRestaurantList.length; i++) {
+    debugPrint(restaurantList[selectedRestaurantList[i]].getName());
     final uri = Uri.parse(
-        "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[aa[i]].getName()}&display=3&start=1&sort=sim");
+        "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[selectedRestaurantList[i]].getName()}&display=3&start=1&sort=sim");
 
     final Map<String, String> header = {
       "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
@@ -128,14 +147,14 @@ Future<dynamic> getUser(String gusi) async {
     };
 
     final response = await http.get(uri, headers: header);
-    debugPrint(response.body);
-    /*String jsonRestaurantData = response.body;
+    //debugPrint(response.body);
+    String jsonRestaurantData = response.body;
     final restaurantJsonList =
-    (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
-
-    for (final model in restaurantJsonList) {
-      restaurantList
-          .add(RestaurantModel.fromNaverApiJson(model as Map<String, dynamic>));
-    }*/
+        (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
+    //debugPrint(restaurantJsonList.toString().split(",")[2].toString().split(" ")[2].toString());
+    for (final i in selectedRestaurantList) {
+      restaurantList[i].image=restaurantJsonList.toString().split(",")[2].toString().split(" ")[2] as Image?;
+      debugPrint(restaurantList[i].toString());
+    }
   }
 }

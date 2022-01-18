@@ -112,7 +112,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  CustomRatingBar(rating: widget.restaurantModel.rating),
+                  CustomRatingBar(rating: widget.restaurantModel.rating??0.0),
                   const Expanded(child: SizedBox()),
                   PrimaryBarButton(onPressed: () {}, label: '지도앱으로 이동'),
                   TextOnlyBarButton(

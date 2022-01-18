@@ -5,6 +5,8 @@ import 'package:what_should_i_eat/providers/my_list_provider.dart';
 import 'package:what_should_i_eat/styles/color.dart';
 import 'package:what_should_i_eat/styles/font.dart';
 
+import 'pages/loading.dart';
+
 void main() {
   runApp(const MyApp());
 
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: darkColorScheme.background,
       ),
-      home: const LoginPage(),
+      home: const Loading(),
     );
   }
 }

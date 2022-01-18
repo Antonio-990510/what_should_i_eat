@@ -2,15 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class RestaurantModel {
-  final double rating;
+  final double? rating;
   final String name;
 
-  final Image image;
+  Image? image;
   final String link;
   final String menu;
   final String description;
   final String address;
   final String telephone;
+
+  set img(Image? img)=>(img==null)?image=null:image=img;
 
   RestaurantModel({
     required this.rating,
@@ -25,9 +27,9 @@ class RestaurantModel {
           imageSrc,
           fit: BoxFit.cover,
         ),
-        assert(0.0 <= rating && rating <= 5.0) {
+        assert(0.0 <= rating! && rating <= 5.0) {
     if (Get.context != null) {
-      precacheImage(image.image, Get.context!);
+      precacheImage(image!.image, Get.context!);
     }
   }
 
@@ -38,8 +40,8 @@ class RestaurantModel {
         menu = json["category"],
         description = json["description"],
         telephone = json["telephone"],
-        image=json["items"][0]["mapx"],
-        rating=json["items"][0]["mapy"],
+        image=null,
+        rating=null,
         address = json["address"];
 
   @override
@@ -55,5 +57,10 @@ class RestaurantModel {
         telephone +
         " " +
         address;
+  }
+
+  String getName(){
+    List<String> searchAddress=address.split(" ");
+    return name;//searchAddress[2]+" "+/+" "+menu
   }
 }

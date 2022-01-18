@@ -286,7 +286,7 @@ class ImageCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            CustomRatingBar(rating: restaurantModel.rating),
+            CustomRatingBar(rating: restaurantModel.rating??0.0),
           ],
         ),
       ),
