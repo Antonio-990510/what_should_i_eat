@@ -8,7 +8,7 @@ import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:what_should_i_eat/providers/my_list_provider.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'utils/fake_path_provider_platform.dart';
+import '../utils/fake_path_provider_platform.dart';
 import 'utils/file_utils.dart';
 
 void main() {

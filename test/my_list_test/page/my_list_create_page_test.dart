@@ -14,7 +14,7 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import '../utils/fake_path_provider_platform.dart';
+import '../../utils/fake_path_provider_platform.dart';
 import '../utils/file_utils.dart';
 
 void main() {

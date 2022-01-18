@@ -10,9 +10,11 @@ class SearchResultPage extends StatefulWidget {
   const SearchResultPage({
     Key? key,
     required this.restaurantModel,
+    this.retryLabel = '이 식당 제외하고 다시 찾기',
   }) : super(key: key);
 
   final RestaurantModel restaurantModel;
+  final String retryLabel;
 
   @override
   State<SearchResultPage> createState() => _SearchResultPageState();
@@ -84,10 +86,11 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 color: context.theme.colorScheme.background,
                 boxShadow: const [
                   BoxShadow(
-                      color: Colors.black38,
-                      offset: Offset(0, -2),
-                      spreadRadius: 2.0,
-                      blurRadius: 4.0),
+                    color: Colors.black38,
+                    offset: Offset(0, -2),
+                    spreadRadius: 2.0,
+                    blurRadius: 4.0,
+                  ),
                 ],
               ),
               padding: const EdgeInsets.all(24.0),
@@ -112,13 +115,17 @@ class _SearchResultPageState extends State<SearchResultPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  CustomRatingBar(rating: widget.restaurantModel.rating??0.0),
+                  // TODO(민성): 나중에 모델이 수정되고 widget.restaurantModel.rating이 null 인 경우 띄우지 않도록 수정
+                  CustomRatingBar(rating: widget.restaurantModel.rating),
                   const Expanded(child: SizedBox()),
+                  // TODO(민성): 나중에 모델이 수정되고 widget.restaurantModel.link가 null 인 경우 띄우지 않도록 수정
                   PrimaryBarButton(onPressed: () {}, label: '지도앱으로 이동'),
                   TextOnlyBarButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO(민성): 구현하기
+                    },
                     labelColor: Colors.white70,
-                    label: '이 식당 제외하고 다시 찾기',
+                    label: widget.retryLabel,
                   ),
                 ],
               ),

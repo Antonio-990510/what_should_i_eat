@@ -1,18 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:what_should_i_eat/constants.dart';
+import 'package:what_should_i_eat/widgets/adaptive_image.dart';
 
 class RestaurantModel {
-  final double? rating;
+  final double rating;
   final String name;
-
-  Image? image;
+  final AdaptiveImage image;
   final String link;
   final String menu;
   final String description;
   final String address;
   final String telephone;
-
-  set img(Image? img)=>(img==null)?image=null:image=img;
 
   RestaurantModel({
     required this.rating,
@@ -23,16 +22,30 @@ class RestaurantModel {
     required this.description,
     required this.telephone,
     required this.address,
-  }) : image = Image.network(
-          imageSrc,
-          fit: BoxFit.cover,
+  })  : image = AdaptiveImage(
+          width: double.infinity,
+          path: imageSrc,
+          height: double.infinity,
+          radius: 0.0,
         ),
-        assert(0.0 <= rating! && rating <= 5.0) {
+        assert(0.0 <= rating && rating <= 5.0) {
     if (Get.context != null) {
-      precacheImage(image!.image, Get.context!);
+      precacheImage(image.imageWidget.image, Get.context!);
     }
   }
 
+  RestaurantModel copyWith({String? imagePath}) {
+    return RestaurantModel(
+      rating: rating,
+      name: name,
+      imageSrc: image.path,
+      link: link,
+      menu: menu,
+      description: description,
+      telephone: telephone,
+      address: address,
+    );
+  }
 
   RestaurantModel.fromNaverApiJson(Map<String, dynamic> json)
       : name = json["title"],
@@ -40,8 +53,9 @@ class RestaurantModel {
         menu = json["category"],
         description = json["description"],
         telephone = json["telephone"],
-        image=null,
-        rating=null,
+        //TODO: 사진, 별점 얻어오기
+        image = AdaptiveImage(path: kSampleFoodImagePaths.first),
+        rating = 0.0,
         address = json["address"];
 
   @override
@@ -57,10 +71,5 @@ class RestaurantModel {
         telephone +
         " " +
         address;
-  }
-
-  String getName(){
-    List<String> searchAddress=address.split(" ");
-    return name;//searchAddress[2]+" "+/+" "+menu
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:what_should_i_eat/pages/loading_page.dart';
 import 'package:what_should_i_eat/pages/search_result_page.dart';
@@ -53,6 +54,7 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   label: '나의 리스트에서 랜덤 찾기',
+                  iconData: FontAwesomeIcons.dice,
                 ),
                 const SizedBox(height: 8),
                 PrimaryBarButton(
@@ -61,11 +63,7 @@ class HomePage extends StatelessWidget {
                         .startWorldCup(sampleRestaurantList);
                   },
                   label: '주변 식당 월드컵',
-                ),
-                const SizedBox(height: 8),
-                PrimaryBarButton(
-                  onPressed: () {},
-                  label: '조건부 랜덤 찾기',
+                  iconData: FontAwesomeIcons.trophy,
                 ),
                 const SizedBox(height: 8),
                 PrimaryBarButton(
@@ -79,6 +77,7 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   label: '주변 식당 랜덤 찾기',
+                  iconData: FontAwesomeIcons.diceThree,
                 ),
               ],
             ),

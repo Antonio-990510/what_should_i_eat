@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:what_should_i_eat/constants.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:what_should_i_eat/utils/text_field_utils.dart';
-import 'package:what_should_i_eat/widgets/asset_or_file_image.dart';
+import 'package:what_should_i_eat/widgets/adaptive_image.dart';
 import 'package:what_should_i_eat/widgets/image_picker_bottom_sheet.dart';
 import 'package:what_should_i_eat/widgets/recheck_dialog.dart';
 
@@ -148,7 +148,7 @@ class _MyListItemEditFieldState extends State<MyListItemEditField> {
           children: [
             InkWell(
               onTap: _onTapImage,
-              child: AssetOrFileImage(
+              child: AdaptiveImage(
                 path: _newImagePath,
                 radius: 8.0,
                 width: 40,

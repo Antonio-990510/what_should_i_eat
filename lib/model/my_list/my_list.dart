@@ -1,6 +1,7 @@
 import 'package:uuid/uuid.dart';
 import 'package:what_should_i_eat/model/my_list/my_list_item.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:what_should_i_eat/model/restaurant_model.dart';
 
 part 'my_list.g.dart';
 
@@ -43,5 +44,18 @@ class MyList {
       title: title ?? this.title,
       items: items ?? _items,
     );
+  }
+
+  List<RestaurantModel> toRestaurantList() {
+    return _items.map((e) {
+      return RestaurantModel(
+        // TODO(민성): 아래의 값들 주변에서 식당 정보 얻어오는 branch가 main에 merge되면 수정하기
+        rating: 0,
+        name: e.name,
+        imageSrc: e.imagePath,
+        link: '',
+        menu: '',
+      );
+    }).toList();
   }
 }
