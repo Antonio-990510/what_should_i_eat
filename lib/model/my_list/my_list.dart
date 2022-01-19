@@ -55,6 +55,9 @@ class MyList {
         imageSrc: e.imagePath,
         link: '',
         menu: '',
+        address: '',
+        telephone: '',
+        description: '',
       );
     }).toList();
   }

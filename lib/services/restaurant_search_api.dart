@@ -112,10 +112,36 @@ Future<dynamic> getUser(String gusi) async {
   while (true) {
     var rnd = Random().nextInt(45) + 1;
     if (!selectedRestaurantList.contains(rnd)) {
-      selectedRestaurantList.add(rnd);
-      debugPrint(selectedRestaurantList.toString());
+      final uri = Uri.parse(
+          "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[rnd].name}&display=1&start=1&sort=sim");
+      final Map<String, String> header = {
+        "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
+        "X-Naver-Client-Secret": "aSgxIylTMz",
+        "display": "1"
+      };
+      final response = await http.get(uri, headers: header);
+      String jsonRestaurantData = response.body;
+      final restaurantJsonList = (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
+      try{
+        final path = restaurantJsonList
+            .toString()
+            .split(",")[2]
+            .toString()
+            .split(" ")[2]
+            .toString();
+        debugPrint(path);
+        restaurantList[rnd] = restaurantList[rnd].copyWith(imagePath: path);
+        debugPrint(restaurantList[rnd].toString());
+        selectedRestaurantList.add(rnd);
+        debugPrint(selectedRestaurantList.toString());
+      }catch(e){
+        debugPrint("이미지가 없습니다. 다른 식당을 찾습니다.");
+      }
     }
-    if (selectedRestaurantList.length == 8) break;
+    if (selectedRestaurantList.length == 8) {
+      selectedRestaurantList=[];
+      break;
+    }
   }
 
   /* 구글API
@@ -135,10 +161,10 @@ Future<dynamic> getUser(String gusi) async {
   }
 */
 
-  for (int i = 0; i < selectedRestaurantList.length; i++) {
-    debugPrint(restaurantList[selectedRestaurantList[i]].getName());
+  /*for (int i = 0; i < selectedRestaurantList.length; i++) {
+    debugPrint(restaurantList[selectedRestaurantList[i]].name);
     final uri = Uri.parse(
-        "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[selectedRestaurantList[i]].getName()}&display=3&start=1&sort=sim");
+        "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[selectedRestaurantList[i]].name}&display=3&start=1&sort=sim");
 
     final Map<String, String> header = {
       "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
@@ -152,9 +178,16 @@ Future<dynamic> getUser(String gusi) async {
     final restaurantJsonList =
         (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
     //debugPrint(restaurantJsonList.toString().split(",")[2].toString().split(" ")[2].toString());
-    for (final i in selectedRestaurantList) {
-      restaurantList[i].image=restaurantJsonList.toString().split(",")[2].toString().split(" ")[2] as Image?;
+    for (final i in restaurantJsonList) {
+      final path = i
+          .toString()
+          .split(",")[2]
+          .toString()
+          .split(" ")[2]
+          .toString();
+      debugPrint(path);
+      restaurantList[i] = restaurantList[i].copyWith(imagePath: path);
       debugPrint(restaurantList[i].toString());
     }
-  }
+  }*/
 }

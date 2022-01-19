@@ -20,7 +20,7 @@ class AdaptiveImage extends StatelessWidget {
                 width: width,
                 fit: BoxFit.cover,
               )
-            : path.isURL
+            : Uri.parse(path).isAbsolute //URL인지 판별
                 ? Image.network(
                     path,
                     height: height,
