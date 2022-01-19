@@ -42,7 +42,6 @@ Future<String> searchUserLocation() async {
           "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lon,$lat&sourcecrs=epsg:4326&output=json&orders=addr,roadaddr"),
       headers: headerss);
   String jsonData = response.body;
-  debugPrint(jsonData);
   Map<String, dynamic> userAddress = jsonDecode(jsonData);
   var address = Address.fromJson(userAddress);
   String userLocation = address.toString();
@@ -103,9 +102,6 @@ Future<List<RestaurantModel>> searchNearbyRestaurant(
           .add(RestaurantModel.fromNaverApiJson(model as Map<String, dynamic>));
     }
   }
-  for (final model in restaurantList) {
-    debugPrint(model.toString());
-  }
   List<int> selectedRestaurantList = [];
   while (true) {
     var rnd = Random().nextInt(_foodList.length * 5);
@@ -128,11 +124,9 @@ Future<List<RestaurantModel>> searchNearbyRestaurant(
             .toString()
             .split(" ")[2]
             .toString();
-        debugPrint(path);
         restaurantList[rnd] = restaurantList[rnd].copyWith(imagePath: path);
         debugPrint(restaurantList[rnd].toString());
         selectedRestaurantList.add(rnd);
-        debugPrint(selectedRestaurantList.toString());
       } catch (e) {
         debugPrint("이미지가 없습니다. 다른 식당을 찾습니다.");
       }
