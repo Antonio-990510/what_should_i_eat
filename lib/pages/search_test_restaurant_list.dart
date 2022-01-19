@@ -19,8 +19,7 @@ class _SearchTestRestaurantListState extends State<SearchTestRestaurantList> {
 
   void getLocation() async {
     try {
-      String myLocation = await searchUserLocation();
-      searchNearbyRestaurant(myLocation);
+      searchNearbyRestaurant();
     } catch (e) {
       debugPrint('인터넷 연결에 문제가 있습니다.');
     }

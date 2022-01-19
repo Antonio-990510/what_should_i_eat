@@ -78,8 +78,8 @@ class Address {
   }
 }
 
-Future<List<RestaurantModel>> searchNearbyRestaurant(
-    String userLocation) async {
+Future<List<RestaurantModel>> searchNearbyRestaurant() async {
+  final String userLocation = await searchUserLocation();
   debugPrint(userLocation);
   List<RestaurantModel> restaurantList = [];
 
