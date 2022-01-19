@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:what_should_i_eat/services/restaurant_search_api.dart';
 
-class SearchRestaurantList extends StatefulWidget {
-  const SearchRestaurantList({Key? key}) : super(key: key);
+class SearchTestRestaurantList extends StatefulWidget {
+  const SearchTestRestaurantList({Key? key}) : super(key: key);
 
   @override
-  _SearchRestaurantListState createState() => _SearchRestaurantListState();
+  _SearchTestRestaurantListState createState() =>
+      _SearchTestRestaurantListState();
 }
 
-class _SearchRestaurantListState extends State<SearchRestaurantList> {
+class _SearchTestRestaurantListState extends State<SearchTestRestaurantList> {
   @override
   void initState() {
     //TODO:implement initState
