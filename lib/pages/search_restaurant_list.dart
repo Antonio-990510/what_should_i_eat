@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:what_should_i_eat/services/restaurant_search_api.dart';
 
-class Loading extends StatefulWidget {
-  const Loading({Key? key}) : super(key: key);
+class SearchRestaurantList extends StatefulWidget {
+  const SearchRestaurantList({Key? key}) : super(key: key);
 
   @override
-  _LoadingState createState() => _LoadingState();
+  _SearchRestaurantListState createState() => _SearchRestaurantListState();
 }
 
-class _LoadingState extends State<Loading> {
+class _SearchRestaurantListState extends State<SearchRestaurantList> {
   @override
   void initState() {
     //TODO:implement initState
@@ -20,7 +20,7 @@ class _LoadingState extends State<Loading> {
     try {
       String myLocation = await fetchData();
       debugPrint(myLocation);
-      getUser(myLocation);
+      getRestaurantList(myLocation);
     } catch (e) {
       debugPrint('인터넷 연결에 문제가 있습니다.');
     }

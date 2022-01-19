@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:what_should_i_eat/pages/login_page.dart';
 import 'package:what_should_i_eat/providers/my_list_provider.dart';
 import 'package:what_should_i_eat/styles/color.dart';
 import 'package:what_should_i_eat/styles/font.dart';
-
-import 'pages/loading.dart';
+import 'pages/search_restaurant_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,7 +50,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: darkColorScheme.background,
       ),
-      home: const Loading(),
+      home: const SearchRestaurantList(),
     );
   }
 }

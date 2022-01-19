@@ -38,7 +38,7 @@ class RestaurantModel {
     return RestaurantModel(
       rating: rating,
       name: name,
-      imageSrc: imagePath??image.path,
+      imageSrc: imagePath ?? image.path,
       link: link,
       menu: menu,
       description: description,
@@ -62,8 +62,8 @@ class RestaurantModel {
   String toString() {
     return name +
         " " +
-        image.path+
-        " "+
+        image.path +
+        " " +
         link +
         " " +
         menu +

@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:what_should_i_eat/constants.dart';
-import 'package:get/get.dart';
 
 class AdaptiveImage extends StatelessWidget {
   /// [path]가 [kSampleFoodImagePaths]에 속하면 [Image.asset]을 생성하고 웹 페이지이면
