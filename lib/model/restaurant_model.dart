@@ -53,7 +53,7 @@ class RestaurantModel {
         menu = json["category"],
         description = json["description"],
         telephone = json["telephone"],
-        //TODO: 사진, 별점 얻어오기
+        // TODO: 사진, 별점 얻어오기
         image = AdaptiveImage(path: kSampleFoodImagePaths.first),
         rating = 0.0,
         address = json["address"];

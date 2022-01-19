@@ -6,14 +6,27 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:what_should_i_eat/model/restaurant_model.dart';
 
-Future<String> fetchData() async {
+const List<String> _foodList = [
+  "맛집",
+  "고깃",
+  "햄버거",
+  "해산물",
+  "족발",
+  "보쌈",
+  "피자",
+  "치킨",
+  "국밥",
+  "분식"
+];
+
+Future<String> searchUserLocation() async {
   await Geolocator.requestPermission();
   Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);
-  //현재위치를 position이라는 변수로 저장
+  // 현재위치를 position이라는 변수로 저장
   String lat = position.latitude.toString();
   String lon = position.longitude.toString();
-  //위도와 경도를 나눠서 변수 선언
+  // 위도와 경도를 나눠서 변수 선언
   debugPrint(lat);
   debugPrint(lon);
   // 잘 나오는지 확인!
@@ -66,25 +79,14 @@ class Address {
   }
 }
 
-Future<dynamic> getRestaurantList(String gusi) async {
-  debugPrint(gusi);
+Future<List<RestaurantModel>> searchNearbyRestaurant(
+    String userLocation) async {
+  debugPrint(userLocation);
   List<RestaurantModel> restaurantList = [];
-  List<String> foodList = [
-    "맛집",
-    "고깃",
-    "햄버거",
-    "해산물",
-    "족발",
-    "보쌈",
-    "피자",
-    "치킨",
-    "국밥",
-    "분식"
-  ];
 
-  for (int i = 0; i < foodList.length; i++) {
+  for (int i = 0; i < _foodList.length; i++) {
     final uri = Uri.parse(
-        "https://openapi.naver.com/v1/search/local.json?query=$gusi ${foodList[i]}&display=20&start=1&sort=random");
+        "https://openapi.naver.com/v1/search/local.json?query=$userLocation ${_foodList[i]}&display=20&start=1&sort=random");
     final Map<String, String> header = {
       "X-Naver-Client-Id": "uWDv77C8E2CmY5bUBJ92",
       "X-Naver-Client-Secret": "aSgxIylTMz",
@@ -92,7 +94,6 @@ Future<dynamic> getRestaurantList(String gusi) async {
     };
 
     final response = await http.get(uri, headers: header);
-    //debugPrint(response.body);
     String jsonRestaurantData = response.body;
     final restaurantJsonList =
         (jsonDecode(jsonRestaurantData)["items"] as List<dynamic>);
@@ -101,7 +102,6 @@ Future<dynamic> getRestaurantList(String gusi) async {
       restaurantList
           .add(RestaurantModel.fromNaverApiJson(model as Map<String, dynamic>));
     }
-    //return response.body;
   }
   for (final model in restaurantList) {
     debugPrint(model.toString());
@@ -142,4 +142,5 @@ Future<dynamic> getRestaurantList(String gusi) async {
       break;
     }
   }
+  return restaurantList;
 }

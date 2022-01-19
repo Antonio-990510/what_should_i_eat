@@ -12,16 +12,16 @@ class SearchTestRestaurantList extends StatefulWidget {
 class _SearchTestRestaurantListState extends State<SearchTestRestaurantList> {
   @override
   void initState() {
-    //TODO:implement initState
+    // TODO:implement initState
     super.initState();
     getLocation();
   }
 
   void getLocation() async {
     try {
-      String myLocation = await fetchData();
+      String myLocation = await searchUserLocation();
       debugPrint(myLocation);
-      getRestaurantList(myLocation);
+      searchNearbyRestaurant(myLocation);
     } catch (e) {
       debugPrint('인터넷 연결에 문제가 있습니다.');
     }
