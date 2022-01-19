@@ -102,10 +102,10 @@ Future<List<RestaurantModel>> searchNearbyRestaurant(
           .add(RestaurantModel.fromNaverApiJson(model as Map<String, dynamic>));
     }
   }
-  List<int> selectedRestaurantList = [];
+  List<int> selectedIndexes = [];
   while (true) {
     var rnd = Random().nextInt(_foodList.length * 5);
-    if (!selectedRestaurantList.contains(rnd)) {
+    if (!selectedIndexes.contains(rnd)) {
       final uri = Uri.parse(
           "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[rnd].name}&display=1&start=1&sort=sim");
       final Map<String, String> header = {
@@ -126,13 +126,13 @@ Future<List<RestaurantModel>> searchNearbyRestaurant(
             .toString();
         restaurantList[rnd] = restaurantList[rnd].copyWith(imagePath: path);
         debugPrint(restaurantList[rnd].toString());
-        selectedRestaurantList.add(rnd);
+        selectedIndexes.add(rnd);
       } catch (e) {
         debugPrint("이미지가 없습니다. 다른 식당을 찾습니다.");
       }
     }
-    if (selectedRestaurantList.length == 8) {
-      selectedRestaurantList = [];
+    if (selectedIndexes.length == 8) {
+      selectedIndexes = [];
       break;
     }
   }
