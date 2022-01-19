@@ -108,7 +108,7 @@ Future<List<RestaurantModel>> searchNearbyRestaurant(
   }
   List<int> selectedRestaurantList = [];
   while (true) {
-    var rnd = Random().nextInt(45) + 1;
+    var rnd = Random().nextInt(_foodList.length * 5);
     if (!selectedRestaurantList.contains(rnd)) {
       final uri = Uri.parse(
           "https://openapi.naver.com/v1/search/image.json?query=${restaurantList[rnd].name}&display=1&start=1&sort=sim");
